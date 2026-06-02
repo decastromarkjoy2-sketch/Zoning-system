@@ -17,6 +17,7 @@ import AuditLogs from "@/pages/audit-logs";
 import Notifications from "@/pages/notifications";
 import Settings from "@/pages/settings";
 import Login from "@/pages/login";
+import Reports from "@/pages/reports";
 
 const queryClient = new QueryClient();
 
@@ -39,6 +40,7 @@ function Router() {
             <Route path="/users" component={Users} />
             <Route path="/audit-logs" component={AuditLogs} />
             <Route path="/notifications" component={Notifications} />
+            <Route path="/reports" component={Reports} />
             <Route path="/settings" component={Settings} />
             <Route component={NotFound} />
           </Switch>

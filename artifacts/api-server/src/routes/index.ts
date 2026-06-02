@@ -8,6 +8,7 @@ import koboRouter from "./kobo";
 import approvalsRouter from "./approvals";
 import auditRouter from "./audit";
 import notificationsRouter from "./notifications";
+import reportsRouter from "./reports";
 
 const router: IRouter = Router();
 
@@ -20,5 +21,6 @@ router.use(koboRouter);
 router.use(approvalsRouter);
 router.use(auditRouter);
 router.use(notificationsRouter);
+router.use(reportsRouter);
 
 export default router;

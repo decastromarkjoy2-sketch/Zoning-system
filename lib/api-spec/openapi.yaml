@@ -7,6 +7,8 @@ servers:
   - url: /api
     description: Base API path
 tags:
+  - name: reports
+    description: Reports and exports
   - name: health
     description: Health operations
   - name: dashboard
@@ -26,6 +28,43 @@ tags:
   - name: notifications
     description: Notifications
 paths:
+  /reports/barangay-summary:
+    get:
+      operationId: getBarangaySummaryReport
+      tags: [reports]
+      summary: Barangay zoning summary report
+      parameters:
+        - name: zone_type
+          in: query
+          schema: { type: string }
+        - name: status
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: Barangay summary
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BarangaySummaryRow"
+
+  /reports/land-use-summary:
+    get:
+      operationId: getLandUseSummaryReport
+      tags: [reports]
+      summary: Land use summary report by zone type
+      responses:
+        "200":
+          description: Land use summary
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LandUseSummaryRow"
+
   /healthz:
     get:
       operationId: healthCheck
@@ -1113,6 +1152,64 @@ components:
         created_at:
           type: string
       required: [id, action, entity_type, created_at]
+
+    BarangaySummaryRow:
+      type: object
+      properties:
+        barangay:
+          type: string
+        total:
+          type: integer
+        approved:
+          type: integer
+        pending:
+          type: integer
+        under_review:
+          type: integer
+        rejected:
+          type: integer
+        residential:
+          type: integer
+        commercial:
+          type: integer
+        industrial:
+          type: integer
+        agricultural:
+          type: integer
+        institutional:
+          type: integer
+        protected_area:
+          type: integer
+        mixed_use:
+          type: integer
+        total_land_area:
+          type: number
+      required: [barangay, total, approved, pending, under_review, rejected, total_land_area]
+
+    LandUseSummaryRow:
+      type: object
+      properties:
+        zone_type:
+          type: string
+        total:
+          type: integer
+        approved:
+          type: integer
+        pending:
+          type: integer
+        under_review:
+          type: integer
+        rejected:
+          type: integer
+        total_land_area:
+          type: number
+        avg_land_area:
+          type: number
+        barangay_count:
+          type: integer
+        color:
+          type: string
+      required: [zone_type, total, approved, pending, under_review, rejected, total_land_area, avg_land_area, barangay_count]
 
     Notification:
       type: object

@@ -11,6 +11,7 @@ import {
   History, 
   Bell, 
   Settings,
+  BarChart2,
   Sun,
   Moon,
   LogOut,
@@ -45,6 +46,12 @@ const navGroups = [
     items: [
       { href: "/approvals", label: "Approvals", icon: CheckSquare },
       { href: "/kobo", label: "KoboToolbox", icon: Database },
+    ],
+  },
+  {
+    title: "Reports",
+    items: [
+      { href: "/reports", label: "Reports", icon: BarChart2 },
     ],
   },
   {

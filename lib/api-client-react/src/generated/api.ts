@@ -24,12 +24,15 @@ import type {
   Approval,
   ApprovalInput,
   AuditLog,
+  BarangaySummaryRow,
   DashboardSummary,
+  GetBarangaySummaryReportParams,
   GetMapRecordsParams,
   HealthStatus,
   KoboConfig,
   KoboConfigUpdate,
   KoboSubmission,
+  LandUseSummaryRow,
   ListApprovalsParams,
   ListAuditLogsParams,
   ListKoboSubmissionsParams,
@@ -65,6 +68,167 @@ type AwaitedInput<T> = PromiseLike<T> | T;
 
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
+
+
+
+export const getGetBarangaySummaryReportUrl = (params?: GetBarangaySummaryReportParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/reports/barangay-summary?${stringifiedParams}` : `/api/reports/barangay-summary`
+}
+
+/**
+ * @summary Barangay zoning summary report
+ */
+export const getBarangaySummaryReport = async (params?: GetBarangaySummaryReportParams, options?: RequestInit): Promise<BarangaySummaryRow[]> => {
+
+  return customFetch<BarangaySummaryRow[]>(getGetBarangaySummaryReportUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetBarangaySummaryReportQueryKey = (params?: GetBarangaySummaryReportParams,) => {
+    return [
+    `/api/reports/barangay-summary`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getGetBarangaySummaryReportQueryOptions = <TData = Awaited<ReturnType<typeof getBarangaySummaryReport>>, TError = ErrorType<unknown>>(params?: GetBarangaySummaryReportParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getBarangaySummaryReport>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetBarangaySummaryReportQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getBarangaySummaryReport>>> = ({ signal }) => getBarangaySummaryReport(params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getBarangaySummaryReport>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetBarangaySummaryReportQueryResult = NonNullable<Awaited<ReturnType<typeof getBarangaySummaryReport>>>
+export type GetBarangaySummaryReportQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Barangay zoning summary report
+ */
+
+export function useGetBarangaySummaryReport<TData = Awaited<ReturnType<typeof getBarangaySummaryReport>>, TError = ErrorType<unknown>>(
+ params?: GetBarangaySummaryReportParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getBarangaySummaryReport>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetBarangaySummaryReportQueryOptions(params,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+
+
+export const getGetLandUseSummaryReportUrl = () => {
+
+
+
+
+  return `/api/reports/land-use-summary`
+}
+
+/**
+ * @summary Land use summary report by zone type
+ */
+export const getLandUseSummaryReport = async ( options?: RequestInit): Promise<LandUseSummaryRow[]> => {
+
+  return customFetch<LandUseSummaryRow[]>(getGetLandUseSummaryReportUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetLandUseSummaryReportQueryKey = () => {
+    return [
+    `/api/reports/land-use-summary`
+    ] as const;
+    }
+
+
+export const getGetLandUseSummaryReportQueryOptions = <TData = Awaited<ReturnType<typeof getLandUseSummaryReport>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getLandUseSummaryReport>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetLandUseSummaryReportQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getLandUseSummaryReport>>> = ({ signal }) => getLandUseSummaryReport({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getLandUseSummaryReport>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetLandUseSummaryReportQueryResult = NonNullable<Awaited<ReturnType<typeof getLandUseSummaryReport>>>
+export type GetLandUseSummaryReportQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Land use summary report by zone type
+ */
+
+export function useGetLandUseSummaryReport<TData = Awaited<ReturnType<typeof getLandUseSummaryReport>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getLandUseSummaryReport>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetLandUseSummaryReportQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
 
 
 

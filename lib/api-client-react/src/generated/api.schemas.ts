@@ -409,6 +409,36 @@ export interface AuditLog {
   created_at: string;
 }
 
+export interface BarangaySummaryRow {
+  barangay: string;
+  total: number;
+  approved: number;
+  pending: number;
+  under_review: number;
+  rejected: number;
+  residential?: number;
+  commercial?: number;
+  industrial?: number;
+  agricultural?: number;
+  institutional?: number;
+  protected_area?: number;
+  mixed_use?: number;
+  total_land_area: number;
+}
+
+export interface LandUseSummaryRow {
+  zone_type: string;
+  total: number;
+  approved: number;
+  pending: number;
+  under_review: number;
+  rejected: number;
+  total_land_area: number;
+  avg_land_area: number;
+  barangay_count: number;
+  color?: string;
+}
+
 export type NotificationType = typeof NotificationType[keyof typeof NotificationType];
 
 
@@ -430,6 +460,11 @@ export interface Notification {
   related_id?: number | null;
   created_at: string;
 }
+
+export type GetBarangaySummaryReportParams = {
+zone_type?: string;
+status?: string;
+};
 
 export type ListUsersParams = {
 role?: string;

@@ -9,6 +9,51 @@ import * as zod from 'zod';
 
 
 /**
+ * @summary Barangay zoning summary report
+ */
+export const GetBarangaySummaryReportQueryParams = zod.object({
+  "zone_type": zod.coerce.string().optional(),
+  "status": zod.coerce.string().optional()
+})
+
+export const GetBarangaySummaryReportResponseItem = zod.object({
+  "barangay": zod.string(),
+  "total": zod.number(),
+  "approved": zod.number(),
+  "pending": zod.number(),
+  "under_review": zod.number(),
+  "rejected": zod.number(),
+  "residential": zod.number().optional(),
+  "commercial": zod.number().optional(),
+  "industrial": zod.number().optional(),
+  "agricultural": zod.number().optional(),
+  "institutional": zod.number().optional(),
+  "protected_area": zod.number().optional(),
+  "mixed_use": zod.number().optional(),
+  "total_land_area": zod.number()
+})
+export const GetBarangaySummaryReportResponse = zod.array(GetBarangaySummaryReportResponseItem)
+
+
+/**
+ * @summary Land use summary report by zone type
+ */
+export const GetLandUseSummaryReportResponseItem = zod.object({
+  "zone_type": zod.string(),
+  "total": zod.number(),
+  "approved": zod.number(),
+  "pending": zod.number(),
+  "under_review": zod.number(),
+  "rejected": zod.number(),
+  "total_land_area": zod.number(),
+  "avg_land_area": zod.number(),
+  "barangay_count": zod.number(),
+  "color": zod.string().optional()
+})
+export const GetLandUseSummaryReportResponse = zod.array(GetLandUseSummaryReportResponseItem)
+
+
+/**
  * @summary Health check
  */
 export const HealthCheckResponse = zod.object({
