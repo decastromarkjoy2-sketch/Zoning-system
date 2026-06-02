@@ -1,0 +1,111 @@
+Create a modern full-stack Zoning Management Web Application using:
+
+Backend:
+- Laravel 12
+- MySQL
+- REST API
+- Queue Jobs for background syncing
+
+Frontend:
+- Bootstrap 5
+- Tailwind CSS
+- Leaflet.js for GIS mapping
+- Chart.js for dashboard analytics
+
+Core Features:
+
+1. KoboToolbox Integration
+- Connect to KoboToolbox API
+- Automatically sync submissions every 5 minutes
+- Manual sync button
+- Sync logs and status monitoring
+- Prevent duplicate records
+
+2. Auto Form Generator
+- Generate zoning forms automatically from Kobo submissions
+- Allow editing after generation
+- Store form history and revisions
+
+3. Zoning Management
+- Residential
+- Commercial
+- Industrial
+- Agricultural
+- Institutional
+- Protected Area
+- Mixed Use
+
+4. GIS Mapping Module
+- Display all records on an interactive map
+- Plot GPS coordinates from Kobo
+- Draw zoning boundaries
+- Filter zones by category
+- Search by barangay, owner, or zone type
+
+5. Validation Workflow
+- Pending
+- Under Review
+- Approved
+- Rejected
+- Reviewer comments
+
+6. Dashboard
+- Total records
+- Approved records
+- Pending validations
+- Zone distribution charts
+- Recent activities
+- Sync statistics
+
+7. Reports
+- Export PDF
+- Export Excel
+- Barangay zoning reports
+- Land use summary reports
+
+8. User Roles
+- Administrator
+- Planning Officer
+- Validator
+- Encoder
+- Viewer
+
+9. Audit Trail
+- Track all changes
+- User activity logs
+- Record history
+
+10. Notifications
+- New submission alerts
+- Approval notifications
+- Sync failure warnings
+
+UI Requirements:
+- Modern LGU government dashboard
+- Clean professional design
+- Responsive mobile-first layout
+- Sidebar navigation
+- Dark and light mode
+- Dashboard cards
+- Interactive maps
+- Professional color palette using blue, green, and white
+
+Database Design:
+- users
+- zoning_records
+- zoning_boundaries
+- kobo_submissions
+- sync_logs
+- approvals
+- comments
+- audit_logs
+
+Architecture:
+- Modular Laravel structure
+- Repository pattern
+- Service classes for Kobo integration
+- API-first design
+- Secure authentication
+- Scalable for city or municipal-wide zoning operations
+
+Generate complete database schema, migrations, models, controllers, API endpoints, dashboard UI, and Kobo synchronization service.

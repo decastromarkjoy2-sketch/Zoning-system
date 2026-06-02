@@ -1,22 +1,36 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Zoning Management System API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: dashboard
+    description: Dashboard analytics
+  - name: users
+    description: User management
+  - name: zoning
+    description: Zoning records
+  - name: boundaries
+    description: GIS zoning boundaries
+  - name: kobo
+    description: KoboToolbox integration
+  - name: approvals
+    description: Validation workflow
+  - name: audit
+    description: Audit trail
+  - name: notifications
+    description: Notifications
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +38,599 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /dashboard/summary:
+    get:
+      operationId: getDashboardSummary
+      tags: [dashboard]
+      summary: Get dashboard summary stats
+      responses:
+        "200":
+          description: Summary stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+
+  /dashboard/zone-distribution:
+    get:
+      operationId: getZoneDistribution
+      tags: [dashboard]
+      summary: Zone type distribution for charts
+      responses:
+        "200":
+          description: Zone distribution
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ZoneCount"
+
+  /dashboard/recent-activity:
+    get:
+      operationId: getRecentActivity
+      tags: [dashboard]
+      summary: Recent activity feed
+      responses:
+        "200":
+          description: Recent activities
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ActivityItem"
+
+  /dashboard/sync-stats:
+    get:
+      operationId: getSyncStats
+      tags: [dashboard]
+      summary: KoboToolbox sync statistics
+      responses:
+        "200":
+          description: Sync statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SyncStats"
+
+  /users:
+    get:
+      operationId: listUsers
+      tags: [users]
+      summary: List all users
+      parameters:
+        - name: role
+          in: query
+          schema:
+            type: string
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+    post:
+      operationId: createUser
+      tags: [users]
+      summary: Create a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /users/{id}:
+    get:
+      operationId: getUser
+      tags: [users]
+      summary: Get user by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: User
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "404":
+          description: Not found
+    patch:
+      operationId: updateUser
+      tags: [users]
+      summary: Update user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+    delete:
+      operationId: deleteUser
+      tags: [users]
+      summary: Delete user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /zoning-records:
+    get:
+      operationId: listZoningRecords
+      tags: [zoning]
+      summary: List zoning records
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: zone_type
+          in: query
+          schema:
+            type: string
+        - name: barangay
+          in: query
+          schema:
+            type: string
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Paginated list of zoning records
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ZoningRecordList"
+    post:
+      operationId: createZoningRecord
+      tags: [zoning]
+      summary: Create a zoning record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ZoningRecordInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ZoningRecord"
+
+  /zoning-records/{id}:
+    get:
+      operationId: getZoningRecord
+      tags: [zoning]
+      summary: Get zoning record by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Zoning record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ZoningRecord"
+        "404":
+          description: Not found
+    patch:
+      operationId: updateZoningRecord
+      tags: [zoning]
+      summary: Update zoning record
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ZoningRecordUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ZoningRecord"
+    delete:
+      operationId: deleteZoningRecord
+      tags: [zoning]
+      summary: Delete zoning record
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /zoning-records/map:
+    get:
+      operationId: getMapRecords
+      tags: [zoning]
+      summary: Get all records with GPS coordinates for the map
+      parameters:
+        - name: zone_type
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: barangay
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Map records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MapRecord"
+
+  /zoning-boundaries:
+    get:
+      operationId: listZoningBoundaries
+      tags: [boundaries]
+      summary: List all zoning boundaries
+      responses:
+        "200":
+          description: List of boundaries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ZoningBoundary"
+    post:
+      operationId: createZoningBoundary
+      tags: [boundaries]
+      summary: Create a zoning boundary
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ZoningBoundaryInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ZoningBoundary"
+
+  /zoning-boundaries/{id}:
+    patch:
+      operationId: updateZoningBoundary
+      tags: [boundaries]
+      summary: Update a zoning boundary
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ZoningBoundaryUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ZoningBoundary"
+    delete:
+      operationId: deleteZoningBoundary
+      tags: [boundaries]
+      summary: Delete a boundary
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /kobo/sync:
+    post:
+      operationId: triggerKoboSync
+      tags: [kobo]
+      summary: Manually trigger KoboToolbox sync
+      responses:
+        "200":
+          description: Sync initiated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SyncResult"
+
+  /kobo/submissions:
+    get:
+      operationId: listKoboSubmissions
+      tags: [kobo]
+      summary: List KoboToolbox submissions
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Submissions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/KoboSubmission"
+
+  /kobo/sync-logs:
+    get:
+      operationId: listSyncLogs
+      tags: [kobo]
+      summary: List sync logs
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Sync logs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SyncLog"
+
+  /kobo/config:
+    get:
+      operationId: getKoboConfig
+      tags: [kobo]
+      summary: Get KoboToolbox configuration
+      responses:
+        "200":
+          description: Config
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KoboConfig"
+    patch:
+      operationId: updateKoboConfig
+      tags: [kobo]
+      summary: Update KoboToolbox configuration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/KoboConfigUpdate"
+      responses:
+        "200":
+          description: Updated config
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KoboConfig"
+
+  /approvals:
+    get:
+      operationId: listApprovals
+      tags: [approvals]
+      summary: List approval/validation requests
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: record_id
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Approvals
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Approval"
+    post:
+      operationId: createApproval
+      tags: [approvals]
+      summary: Submit a record for approval
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApprovalInput"
+      responses:
+        "201":
+          description: Submitted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Approval"
+
+  /approvals/{id}/review:
+    post:
+      operationId: reviewApproval
+      tags: [approvals]
+      summary: Approve or reject a record
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReviewDecision"
+      responses:
+        "200":
+          description: Decision recorded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Approval"
+
+  /audit-logs:
+    get:
+      operationId: listAuditLogs
+      tags: [audit]
+      summary: List audit logs
+      parameters:
+        - name: user_id
+          in: query
+          schema:
+            type: integer
+        - name: entity_type
+          in: query
+          schema:
+            type: string
+        - name: entity_id
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: page
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Audit logs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AuditLog"
+
+  /notifications:
+    get:
+      operationId: listNotifications
+      tags: [notifications]
+      summary: List notifications for current user
+      parameters:
+        - name: unread_only
+          in: query
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: Notifications
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Notification"
+
+  /notifications/{id}/read:
+    post:
+      operationId: markNotificationRead
+      tags: [notifications]
+      summary: Mark a notification as read
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Marked read
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Notification"
+
 components:
   schemas:
     HealthStatus:
@@ -31,6 +638,500 @@ components:
       properties:
         status:
           type: string
-      required:
-        - status
+      required: [status]
 
+    DashboardSummary:
+      type: object
+      properties:
+        total_records:
+          type: integer
+        approved_records:
+          type: integer
+        pending_validations:
+          type: integer
+        rejected_records:
+          type: integer
+        under_review:
+          type: integer
+        total_synced:
+          type: integer
+        last_sync:
+          type: ["string", "null"]
+        unread_notifications:
+          type: integer
+      required:
+        - total_records
+        - approved_records
+        - pending_validations
+        - rejected_records
+        - under_review
+        - total_synced
+        - last_sync
+        - unread_notifications
+
+    ZoneCount:
+      type: object
+      properties:
+        zone_type:
+          type: string
+        count:
+          type: integer
+        color:
+          type: string
+      required: [zone_type, count, color]
+
+    ActivityItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        action:
+          type: string
+        entity_type:
+          type: string
+        entity_id:
+          type: integer
+        description:
+          type: string
+        user_name:
+          type: string
+        created_at:
+          type: string
+      required: [id, action, entity_type, entity_id, description, user_name, created_at]
+
+    SyncStats:
+      type: object
+      properties:
+        total_syncs:
+          type: integer
+        successful_syncs:
+          type: integer
+        failed_syncs:
+          type: integer
+        records_synced_today:
+          type: integer
+        last_sync_status:
+          type: ["string", "null"]
+        last_sync_at:
+          type: ["string", "null"]
+      required:
+        - total_syncs
+        - successful_syncs
+        - failed_syncs
+        - records_synced_today
+        - last_sync_status
+        - last_sync_at
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+          enum: [administrator, planning_officer, validator, encoder, viewer]
+        is_active:
+          type: boolean
+        created_at:
+          type: string
+        updated_at:
+          type: string
+      required: [id, name, email, role, is_active, created_at, updated_at]
+
+    UserInput:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+          enum: [administrator, planning_officer, validator, encoder, viewer]
+        password:
+          type: string
+      required: [name, email, role, password]
+
+    UserUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+          enum: [administrator, planning_officer, validator, encoder, viewer]
+        is_active:
+          type: boolean
+        password:
+          type: ["string", "null"]
+
+    ZoningRecord:
+      type: object
+      properties:
+        id:
+          type: integer
+        reference_number:
+          type: string
+        owner_name:
+          type: string
+        owner_contact:
+          type: ["string", "null"]
+        barangay:
+          type: string
+        address:
+          type: string
+        zone_type:
+          type: string
+          enum: [residential, commercial, industrial, agricultural, institutional, protected_area, mixed_use]
+        status:
+          type: string
+          enum: [pending, under_review, approved, rejected]
+        land_area:
+          type: ["number", "null"]
+        gps_lat:
+          type: ["number", "null"]
+        gps_lng:
+          type: ["number", "null"]
+        notes:
+          type: ["string", "null"]
+        kobo_submission_id:
+          type: ["string", "null"]
+        created_by:
+          type: ["integer", "null"]
+        created_at:
+          type: string
+        updated_at:
+          type: string
+      required:
+        - id
+        - reference_number
+        - owner_name
+        - barangay
+        - address
+        - zone_type
+        - status
+        - created_at
+        - updated_at
+
+    ZoningRecordInput:
+      type: object
+      properties:
+        owner_name:
+          type: string
+        owner_contact:
+          type: string
+        barangay:
+          type: string
+        address:
+          type: string
+        zone_type:
+          type: string
+          enum: [residential, commercial, industrial, agricultural, institutional, protected_area, mixed_use]
+        land_area:
+          type: number
+        gps_lat:
+          type: number
+        gps_lng:
+          type: number
+        notes:
+          type: string
+      required: [owner_name, barangay, address, zone_type]
+
+    ZoningRecordUpdate:
+      type: object
+      properties:
+        owner_name:
+          type: string
+        owner_contact:
+          type: string
+        barangay:
+          type: string
+        address:
+          type: string
+        zone_type:
+          type: string
+          enum: [residential, commercial, industrial, agricultural, institutional, protected_area, mixed_use]
+        status:
+          type: string
+          enum: [pending, under_review, approved, rejected]
+        land_area:
+          type: number
+        gps_lat:
+          type: number
+        gps_lng:
+          type: number
+        notes:
+          type: string
+
+    ZoningRecordList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/ZoningRecord"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+      required: [data, total, page, limit]
+
+    MapRecord:
+      type: object
+      properties:
+        id:
+          type: integer
+        reference_number:
+          type: string
+        owner_name:
+          type: string
+        barangay:
+          type: string
+        zone_type:
+          type: string
+        status:
+          type: string
+        gps_lat:
+          type: number
+        gps_lng:
+          type: number
+      required: [id, reference_number, owner_name, barangay, zone_type, status, gps_lat, gps_lng]
+
+    ZoningBoundary:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        zone_type:
+          type: string
+        geojson:
+          type: object
+        color:
+          type: ["string", "null"]
+        description:
+          type: ["string", "null"]
+        created_at:
+          type: string
+      required: [id, name, zone_type, geojson, created_at]
+
+    ZoningBoundaryInput:
+      type: object
+      properties:
+        name:
+          type: string
+        zone_type:
+          type: string
+          enum: [residential, commercial, industrial, agricultural, institutional, protected_area, mixed_use]
+        geojson:
+          type: object
+        color:
+          type: string
+        description:
+          type: string
+      required: [name, zone_type, geojson]
+
+    ZoningBoundaryUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        zone_type:
+          type: string
+        geojson:
+          type: object
+        color:
+          type: string
+        description:
+          type: string
+
+    SyncResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+        records_synced:
+          type: integer
+        duplicates_skipped:
+          type: integer
+        errors:
+          type: integer
+        message:
+          type: string
+      required: [success, records_synced, duplicates_skipped, errors, message]
+
+    KoboSubmission:
+      type: object
+      properties:
+        id:
+          type: integer
+        submission_id:
+          type: string
+        form_id:
+          type: string
+        data:
+          type: object
+        synced_at:
+          type: string
+        processed:
+          type: boolean
+      required: [id, submission_id, form_id, data, synced_at, processed]
+
+    SyncLog:
+      type: object
+      properties:
+        id:
+          type: integer
+        status:
+          type: string
+          enum: [success, failed, in_progress]
+        records_synced:
+          type: integer
+        duplicates_skipped:
+          type: integer
+        error_message:
+          type: ["string", "null"]
+        started_at:
+          type: string
+        completed_at:
+          type: ["string", "null"]
+      required: [id, status, records_synced, duplicates_skipped, started_at]
+
+    KoboConfig:
+      type: object
+      properties:
+        api_url:
+          type: string
+        form_id:
+          type: string
+        is_configured:
+          type: boolean
+        sync_interval_minutes:
+          type: integer
+        last_sync:
+          type: ["string", "null"]
+      required: [api_url, form_id, is_configured, sync_interval_minutes, last_sync]
+
+    KoboConfigUpdate:
+      type: object
+      properties:
+        api_url:
+          type: string
+        api_token:
+          type: string
+        form_id:
+          type: string
+        sync_interval_minutes:
+          type: integer
+
+    Approval:
+      type: object
+      properties:
+        id:
+          type: integer
+        record_id:
+          type: integer
+        reviewer_id:
+          type: ["integer", "null"]
+        submitted_by:
+          type: integer
+        status:
+          type: string
+          enum: [pending, under_review, approved, rejected]
+        comment:
+          type: ["string", "null"]
+        reviewer_name:
+          type: ["string", "null"]
+        submitter_name:
+          type: string
+        record_reference:
+          type: string
+        created_at:
+          type: string
+        reviewed_at:
+          type: ["string", "null"]
+      required:
+        - id
+        - record_id
+        - submitted_by
+        - status
+        - submitter_name
+        - record_reference
+        - created_at
+
+    ApprovalInput:
+      type: object
+      properties:
+        record_id:
+          type: integer
+        submitted_by:
+          type: integer
+        comment:
+          type: string
+      required: [record_id, submitted_by]
+
+    ReviewDecision:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [approved, rejected, under_review]
+        comment:
+          type: string
+        reviewer_id:
+          type: integer
+      required: [status, reviewer_id]
+
+    AuditLog:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: ["integer", "null"]
+        user_name:
+          type: ["string", "null"]
+        action:
+          type: string
+        entity_type:
+          type: string
+        entity_id:
+          type: ["integer", "null"]
+        changes:
+          type: ["object", "null"]
+        ip_address:
+          type: ["string", "null"]
+        created_at:
+          type: string
+      required: [id, action, entity_type, created_at]
+
+    Notification:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        type:
+          type: string
+          enum: [new_submission, approval_update, sync_failure, record_update]
+        title:
+          type: string
+        message:
+          type: string
+        is_read:
+          type: boolean
+        related_id:
+          type: ["integer", "null"]
+        created_at:
+          type: string
+      required: [id, user_id, type, title, message, is_read, created_at]

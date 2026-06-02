@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Zoning Management System"
+version = "1.0.0"
+id = "artifacts/zoning-app"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 19033
+
+[services.development]
+run = "pnpm --filter @workspace/zoning-app run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/zoning-app", "run", "build" ]
+publicDir = "artifacts/zoning-app/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "19033"
+BASE_PATH = "/"
