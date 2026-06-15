@@ -306,11 +306,11 @@ export default function ZoningRecords() {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-1">
-                      <Link href={`/zoning-records/${record.id}`}>
-                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <Button asChild variant="ghost" size="icon" className="h-8 w-8">
+                        <Link href={`/zoning-records/${record.id}`}>
                           <Eye className="h-4 w-4" />
-                        </Button>
-                      </Link>
+                        </Link>
+                      </Button>
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive">

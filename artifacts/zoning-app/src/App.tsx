@@ -28,12 +28,16 @@ function Router() {
       <Route path="/">
         <Redirect to="/dashboard" />
       </Route>
+      <Route path="/zoning-records/:id">
+        <Layout>
+          <ZoningRecordDetail />
+        </Layout>
+      </Route>
       <Route path="/:rest*">
         <Layout>
           <Switch>
             <Route path="/dashboard" component={Dashboard} />
             <Route path="/zoning-records" component={ZoningRecords} />
-            <Route path="/zoning-records/:id" component={ZoningRecordDetail} />
             <Route path="/map" component={MapPage} />
             <Route path="/kobo" component={Kobo} />
             <Route path="/approvals" component={Approvals} />
