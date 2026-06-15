@@ -4,6 +4,7 @@ import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
+import OfflineBanner from "@/components/offline-banner";
 
 import Layout from "@/components/layout";
 import Dashboard from "@/pages/dashboard";
@@ -69,6 +70,7 @@ function App() {
             <Router />
           </WouterRouter>
           <Toaster />
+          <OfflineBanner />
         </TooltipProvider>
       </QueryClientProvider>
     </ThemeProvider>
