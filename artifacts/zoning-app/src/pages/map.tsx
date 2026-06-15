@@ -170,7 +170,7 @@ export default function MapPage() {
           <SelectTrigger className="w-44">
             <SelectValue placeholder="Zone Type" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="z-[1100]">
             <SelectItem value="all">All Zones</SelectItem>
             <SelectItem value="residential">Residential</SelectItem>
             <SelectItem value="commercial">Commercial</SelectItem>
@@ -185,7 +185,7 @@ export default function MapPage() {
           <SelectTrigger className="w-40">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="z-[1100]">
             <SelectItem value="all">All Statuses</SelectItem>
             <SelectItem value="pending">Pending</SelectItem>
             <SelectItem value="under_review">Under Review</SelectItem>
