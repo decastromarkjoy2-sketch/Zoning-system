@@ -152,6 +152,38 @@ export interface ZoningRecord {
   kobo_submission_id?: string | null;
   /** @nullable */
   created_by?: number | null;
+  /** @nullable */
+  or_no?: string | null;
+  /** @nullable */
+  date_of_payment?: string | null;
+  /** @nullable */
+  corporation_name?: string | null;
+  /** @nullable */
+  corporation_address?: string | null;
+  /** @nullable */
+  authorized_rep_name?: string | null;
+  /** @nullable */
+  authorized_rep_address?: string | null;
+  /** @nullable */
+  project_type?: string | null;
+  /** @nullable */
+  project_nature?: string | null;
+  /** @nullable */
+  floor_area?: number | null;
+  /** @nullable */
+  right_over_land?: string | null;
+  /** @nullable */
+  project_tenure?: string | null;
+  /** @nullable */
+  tct_tdn?: string | null;
+  /** @nullable */
+  project_cost?: number | null;
+  /** @nullable */
+  release_mode?: string | null;
+  /** @nullable */
+  amount_paid?: number | null;
+  /** @nullable */
+  date_issued?: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -179,6 +211,22 @@ export interface ZoningRecordInput {
   gps_lat?: number;
   gps_lng?: number;
   notes?: string;
+  or_no?: string;
+  date_of_payment?: string;
+  corporation_name?: string;
+  corporation_address?: string;
+  authorized_rep_name?: string;
+  authorized_rep_address?: string;
+  project_type?: string;
+  project_nature?: string;
+  floor_area?: number;
+  right_over_land?: string;
+  project_tenure?: string;
+  tct_tdn?: string;
+  project_cost?: number;
+  release_mode?: string;
+  amount_paid?: number;
+  date_issued?: string;
 }
 
 export type ZoningRecordUpdateZoneType = typeof ZoningRecordUpdateZoneType[keyof typeof ZoningRecordUpdateZoneType];
@@ -215,6 +263,22 @@ export interface ZoningRecordUpdate {
   gps_lat?: number;
   gps_lng?: number;
   notes?: string;
+  or_no?: string;
+  date_of_payment?: string;
+  corporation_name?: string;
+  corporation_address?: string;
+  authorized_rep_name?: string;
+  authorized_rep_address?: string;
+  project_type?: string;
+  project_nature?: string;
+  floor_area?: number;
+  right_over_land?: string;
+  project_tenure?: string;
+  tct_tdn?: string;
+  project_cost?: number;
+  release_mode?: string;
+  amount_paid?: number;
+  date_issued?: string;
 }
 
 export interface ZoningRecordList {

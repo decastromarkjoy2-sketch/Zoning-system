@@ -19,4 +19,20 @@ export interface ZoningRecordUpdate {
   gps_lat?: number;
   gps_lng?: number;
   notes?: string;
+  or_no?: string;
+  date_of_payment?: string;
+  corporation_name?: string;
+  corporation_address?: string;
+  authorized_rep_name?: string;
+  authorized_rep_address?: string;
+  project_type?: string;
+  project_nature?: string;
+  floor_area?: number;
+  right_over_land?: string;
+  project_tenure?: string;
+  tct_tdn?: string;
+  project_cost?: number;
+  release_mode?: string;
+  amount_paid?: number;
+  date_issued?: string;
 }

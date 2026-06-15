@@ -5,10 +5,11 @@ import {
   Search,
   Filter,
   Eye,
-  Pencil,
   Trash2,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import {
   useListZoningRecords,
@@ -58,6 +59,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Separator } from "@/components/ui/separator";
 
 const ZONE_COLORS: Record<string, string> = {
   residential: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300",
@@ -84,6 +86,15 @@ function ZoneChip({ type }: { type: string }) {
   );
 }
 
+function SectionHeader({ label }: { label: string }) {
+  return (
+    <div className="col-span-2 pt-2">
+      <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{label}</p>
+      <Separator className="mt-1" />
+    </div>
+  );
+}
+
 export default function ZoningRecords() {
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
@@ -91,6 +102,13 @@ export default function ZoningRecords() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [zoneFilter, setZoneFilter] = useState("all");
   const [createOpen, setCreateOpen] = useState(false);
+  const [showAdvanced, setShowAdvanced] = useState(false);
+
+  const [zoneTypeValue, setZoneTypeValue] = useState("residential");
+  const [projectNatureValue, setProjectNatureValue] = useState("NEW DEVELOPMENT");
+  const [rightOverLandValue, setRightOverLandValue] = useState("OWNED");
+  const [projectTenureValue, setProjectTenureValue] = useState("PERMANENT");
+  const [releaseModeValue, setReleaseModeValue] = useState("pickup");
 
   const params = {
     page,
@@ -115,6 +133,12 @@ export default function ZoningRecords() {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: getListZoningRecordsQueryKey() });
         setCreateOpen(false);
+        setZoneTypeValue("residential");
+        setProjectNatureValue("NEW DEVELOPMENT");
+        setRightOverLandValue("OWNED");
+        setProjectTenureValue("PERMANENT");
+        setReleaseModeValue("pickup");
+        setShowAdvanced(false);
       },
     },
   });
@@ -125,17 +149,37 @@ export default function ZoningRecords() {
     e.preventDefault();
     const form = e.currentTarget;
     const fd = new FormData(form);
+
+    const get = (k: string) => (fd.get(k) as string) || undefined;
+    const getNum = (k: string) => fd.get(k) ? Number(fd.get(k)) : undefined;
+
     createMutation.mutate({
       data: {
         owner_name: fd.get("owner_name") as string,
-        owner_contact: fd.get("owner_contact") as string,
+        owner_contact: get("owner_contact"),
         barangay: fd.get("barangay") as string,
         address: fd.get("address") as string,
-        zone_type: fd.get("zone_type") as any,
-        land_area: fd.get("land_area") ? Number(fd.get("land_area")) : undefined,
-        gps_lat: fd.get("gps_lat") ? Number(fd.get("gps_lat")) : undefined,
-        gps_lng: fd.get("gps_lng") ? Number(fd.get("gps_lng")) : undefined,
-        notes: fd.get("notes") as string,
+        zone_type: zoneTypeValue as any,
+        land_area: getNum("land_area"),
+        floor_area: getNum("floor_area"),
+        gps_lat: getNum("gps_lat"),
+        gps_lng: getNum("gps_lng"),
+        notes: get("notes"),
+        or_no: get("or_no"),
+        date_of_payment: get("date_of_payment"),
+        corporation_name: get("corporation_name"),
+        corporation_address: get("corporation_address"),
+        authorized_rep_name: get("authorized_rep_name"),
+        authorized_rep_address: get("authorized_rep_address"),
+        project_type: get("project_type"),
+        project_nature: projectNatureValue || get("project_nature"),
+        right_over_land: rightOverLandValue,
+        project_tenure: projectTenureValue,
+        tct_tdn: get("tct_tdn"),
+        project_cost: getNum("project_cost"),
+        amount_paid: getNum("amount_paid"),
+        release_mode: releaseModeValue,
+        date_issued: get("date_issued"),
       },
     });
   }
@@ -181,6 +225,7 @@ export default function ZoningRecords() {
             <SelectItem value="mixed_use">Mixed Use</SelectItem>
           </SelectContent>
         </Select>
+
         <Dialog open={createOpen} onOpenChange={setCreateOpen}>
           <DialogTrigger asChild>
             <Button className="ml-auto">
@@ -188,32 +233,114 @@ export default function ZoningRecords() {
               New Record
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl">
+          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Create Zoning Record</DialogTitle>
-              <DialogDescription>Add a new land use zoning record.</DialogDescription>
+              <DialogTitle>Application for Locational Clearance</DialogTitle>
+              <DialogDescription>
+                Fill in the application details below. Fields marked * are required.
+              </DialogDescription>
             </DialogHeader>
+
             <form onSubmit={handleCreate}>
-              <div className="grid grid-cols-2 gap-4 py-4">
+              <div className="grid grid-cols-2 gap-x-4 gap-y-3 py-2">
+
+                {/* ── Payment Details ── */}
+                <SectionHeader label="Payment Details" />
                 <div className="space-y-1.5">
-                  <Label htmlFor="owner_name">Owner Name *</Label>
-                  <Input id="owner_name" name="owner_name" required />
+                  <Label htmlFor="or_no">O.R. No.</Label>
+                  <Input id="or_no" name="or_no" placeholder="Official Receipt number" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="owner_contact">Contact</Label>
-                  <Input id="owner_contact" name="owner_contact" />
+                  <Label htmlFor="date_of_payment">Date of Payment</Label>
+                  <Input id="date_of_payment" name="date_of_payment" type="date" />
                 </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="amount_paid">Amount Paid (₱)</Label>
+                  <Input id="amount_paid" name="amount_paid" type="number" step="0.01" placeholder="0.00" />
+                </div>
+
+                {/* ── Applicant Information ── */}
+                <SectionHeader label="Applicant Information" />
+                <div className="space-y-1.5">
+                  <Label htmlFor="owner_name">Name of Applicant (Last, First, Middle) *</Label>
+                  <Input id="owner_name" name="owner_name" required placeholder="e.g. Dela Cruz, Juan A." />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="owner_contact">Tel. / Contact No.</Label>
+                  <Input id="owner_contact" name="owner_contact" placeholder="+63 9xx xxx xxxx" />
+                </div>
+                <div className="col-span-2 space-y-1.5">
+                  <Label htmlFor="address">Address of Applicant *</Label>
+                  <Input id="address" name="address" required placeholder="Purok, Barangay, Municipality" />
+                </div>
+
+                {/* ── Corporation / Representative ── */}
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="col-span-2 -mb-1 justify-start text-muted-foreground"
+                  onClick={() => setShowAdvanced((v) => !v)}
+                >
+                  {showAdvanced ? <ChevronUp className="mr-1 h-3 w-3" /> : <ChevronDown className="mr-1 h-3 w-3" />}
+                  {showAdvanced ? "Hide" : "Show"} Corporation &amp; Representative fields
+                </Button>
+
+                {showAdvanced && (
+                  <>
+                    <SectionHeader label="Corporation (if applicable)" />
+                    <div className="space-y-1.5">
+                      <Label htmlFor="corporation_name">Name of Corporation</Label>
+                      <Input id="corporation_name" name="corporation_name" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="corporation_address">Address of Corporation</Label>
+                      <Input id="corporation_address" name="corporation_address" />
+                    </div>
+
+                    <SectionHeader label="Authorized Representative" />
+                    <div className="space-y-1.5">
+                      <Label htmlFor="authorized_rep_name">Name of Authorized Representative</Label>
+                      <Input id="authorized_rep_name" name="authorized_rep_name" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="authorized_rep_address">Address of Authorized Representative</Label>
+                      <Input id="authorized_rep_address" name="authorized_rep_address" />
+                    </div>
+                  </>
+                )}
+
+                {/* ── Project Details ── */}
+                <SectionHeader label="Project Details" />
+                <div className="space-y-1.5">
+                  <Label htmlFor="project_type">Project Type</Label>
+                  <Input id="project_type" name="project_type" placeholder="e.g. One storey residential building" />
+                </div>
+                <div className="space-y-1.5">
+                  <Label>Project Nature</Label>
+                  <Select value={projectNatureValue} onValueChange={setProjectNatureValue}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="NEW DEVELOPMENT">New Development</SelectItem>
+                      <SelectItem value="ADDITION/ALTERATION">Addition / Alteration</SelectItem>
+                      <SelectItem value="RENOVATION">Renovation</SelectItem>
+                      <SelectItem value="CHANGE OF USE">Change of Use</SelectItem>
+                      <SelectItem value="TEMPORARY">Temporary</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* ── Project Location & Scope ── */}
+                <SectionHeader label="Project Location &amp; Scope" />
                 <div className="space-y-1.5">
                   <Label htmlFor="barangay">Barangay *</Label>
-                  <Input id="barangay" name="barangay" required />
+                  <Input id="barangay" name="barangay" required placeholder="e.g. Poblacion" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="address">Address *</Label>
-                  <Input id="address" name="address" required />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="zone_type">Zone Type *</Label>
-                  <Select name="zone_type" defaultValue="residential">
+                  <Label>Zone / Land Use *</Label>
+                  <Select value={zoneTypeValue} onValueChange={setZoneTypeValue}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -229,26 +356,87 @@ export default function ZoningRecords() {
                   </Select>
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="land_area">Land Area (sqm)</Label>
-                  <Input id="land_area" name="land_area" type="number" step="0.01" />
+                  <Label htmlFor="land_area">Lot Area (sqm)</Label>
+                  <Input id="land_area" name="land_area" type="number" step="0.01" placeholder="0.00" />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="floor_area">Floor Area (sqm)</Label>
+                  <Input id="floor_area" name="floor_area" type="number" step="0.01" placeholder="0.00" />
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="gps_lat">GPS Latitude</Label>
-                  <Input id="gps_lat" name="gps_lat" type="number" step="0.0000001" placeholder="14.5995" />
+                  <Input id="gps_lat" name="gps_lat" type="number" step="0.0000001" placeholder="9.6312" />
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="gps_lng">GPS Longitude</Label>
-                  <Input id="gps_lng" name="gps_lng" type="number" step="0.0000001" placeholder="120.9842" />
+                  <Input id="gps_lng" name="gps_lng" type="number" step="0.0000001" placeholder="126.1978" />
                 </div>
+
+                {/* ── Land & Tenure ── */}
+                <SectionHeader label="Land &amp; Tenure" />
+                <div className="space-y-1.5">
+                  <Label>Right Over Land</Label>
+                  <Select value={rightOverLandValue} onValueChange={setRightOverLandValue}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="OWNED">Owned</SelectItem>
+                      <SelectItem value="WITH CONSENT">With Consent of Owner</SelectItem>
+                      <SelectItem value="LEASED">Leased</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label>Project Tenure</Label>
+                  <Select value={projectTenureValue} onValueChange={setProjectTenureValue}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="PERMANENT">Permanent</SelectItem>
+                      <SelectItem value="TEMPORARY">Temporary</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="tct_tdn">TCT / TDN No.</Label>
+                  <Input id="tct_tdn" name="tct_tdn" placeholder="TCT-XXXXXXX or TDN-XXXXXXX" />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="project_cost">Project Cost (₱)</Label>
+                  <Input id="project_cost" name="project_cost" type="number" step="0.01" placeholder="0.00" />
+                </div>
+
+                {/* ── Release & Decision ── */}
+                <SectionHeader label="Release of Decision" />
+                <div className="space-y-1.5">
+                  <Label>Preferred Mode of Release</Label>
+                  <Select value={releaseModeValue} onValueChange={setReleaseModeValue}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="pickup">Pick-up</SelectItem>
+                      <SelectItem value="mail">Mail</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="date_issued">Date Issued</Label>
+                  <Input id="date_issued" name="date_issued" type="date" />
+                </div>
+
                 <div className="col-span-2 space-y-1.5">
-                  <Label htmlFor="notes">Notes</Label>
-                  <Textarea id="notes" name="notes" rows={3} />
+                  <Label htmlFor="notes">Notes / Remarks</Label>
+                  <Textarea id="notes" name="notes" rows={2} placeholder="Additional notes..." />
                 </div>
               </div>
-              <DialogFooter>
+
+              <DialogFooter className="mt-4">
                 <Button type="button" variant="outline" onClick={() => setCreateOpen(false)}>Cancel</Button>
                 <Button type="submit" disabled={createMutation.isPending}>
-                  {createMutation.isPending ? "Creating..." : "Create Record"}
+                  {createMutation.isPending ? "Saving..." : "Submit Application"}
                 </Button>
               </DialogFooter>
             </form>
@@ -306,8 +494,8 @@ export default function ZoningRecords() {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-1">
-                      <Button asChild variant="ghost" size="icon" className="h-8 w-8">
-                        <Link href={`/zoning-records/${record.id}`}>
+                      <Button asChild variant="ghost" size="icon" className="h-8 w-8" title="View Generated Forms">
+                        <Link href={`/zoning-records/${record.id}/form`}>
                           <Eye className="h-4 w-4" />
                         </Link>
                       </Button>

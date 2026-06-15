@@ -9,6 +9,7 @@ import Layout from "@/components/layout";
 import Dashboard from "@/pages/dashboard";
 import ZoningRecords from "@/pages/zoning-records/index";
 import ZoningRecordDetail from "@/pages/zoning-records/detail";
+import ZoningRecordFormView from "@/pages/zoning-records/form-view";
 import MapPage from "@/pages/map";
 import Kobo from "@/pages/kobo";
 import Approvals from "@/pages/approvals";
@@ -27,6 +28,11 @@ function Router() {
       <Route path="/login" component={Login} />
       <Route path="/">
         <Redirect to="/dashboard" />
+      </Route>
+      <Route path="/zoning-records/:id/form">
+        <Layout>
+          <ZoningRecordFormView />
+        </Layout>
       </Route>
       <Route path="/zoning-records/:id">
         <Layout>

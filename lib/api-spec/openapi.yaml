@@ -843,6 +843,38 @@ components:
           type: ["string", "null"]
         created_by:
           type: ["integer", "null"]
+        or_no:
+          type: ["string", "null"]
+        date_of_payment:
+          type: ["string", "null"]
+        corporation_name:
+          type: ["string", "null"]
+        corporation_address:
+          type: ["string", "null"]
+        authorized_rep_name:
+          type: ["string", "null"]
+        authorized_rep_address:
+          type: ["string", "null"]
+        project_type:
+          type: ["string", "null"]
+        project_nature:
+          type: ["string", "null"]
+        floor_area:
+          type: ["number", "null"]
+        right_over_land:
+          type: ["string", "null"]
+        project_tenure:
+          type: ["string", "null"]
+        tct_tdn:
+          type: ["string", "null"]
+        project_cost:
+          type: ["number", "null"]
+        release_mode:
+          type: ["string", "null"]
+        amount_paid:
+          type: ["number", "null"]
+        date_issued:
+          type: ["string", "null"]
         created_at:
           type: string
         updated_at:
@@ -880,6 +912,38 @@ components:
           type: number
         notes:
           type: string
+        or_no:
+          type: string
+        date_of_payment:
+          type: string
+        corporation_name:
+          type: string
+        corporation_address:
+          type: string
+        authorized_rep_name:
+          type: string
+        authorized_rep_address:
+          type: string
+        project_type:
+          type: string
+        project_nature:
+          type: string
+        floor_area:
+          type: number
+        right_over_land:
+          type: string
+        project_tenure:
+          type: string
+        tct_tdn:
+          type: string
+        project_cost:
+          type: number
+        release_mode:
+          type: string
+        amount_paid:
+          type: number
+        date_issued:
+          type: string
       required: [owner_name, barangay, address, zone_type]
 
     ZoningRecordUpdate:
@@ -906,6 +970,38 @@ components:
         gps_lng:
           type: number
         notes:
+          type: string
+        or_no:
+          type: string
+        date_of_payment:
+          type: string
+        corporation_name:
+          type: string
+        corporation_address:
+          type: string
+        authorized_rep_name:
+          type: string
+        authorized_rep_address:
+          type: string
+        project_type:
+          type: string
+        project_nature:
+          type: string
+        floor_area:
+          type: number
+        right_over_land:
+          type: string
+        project_tenure:
+          type: string
+        tct_tdn:
+          type: string
+        project_cost:
+          type: number
+        release_mode:
+          type: string
+        amount_paid:
+          type: number
+        date_issued:
           type: string
 
     ZoningRecordList:

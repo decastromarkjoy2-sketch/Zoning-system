@@ -29,6 +29,22 @@ function recordToResponse(r: typeof zoningRecordsTable.$inferSelect) {
     notes: r.notes ?? null,
     kobo_submission_id: r.koboSubmissionId ?? null,
     created_by: r.createdBy ?? null,
+    or_no: r.orNo ?? null,
+    date_of_payment: r.dateOfPayment ? r.dateOfPayment.toISOString() : null,
+    corporation_name: r.corporationName ?? null,
+    corporation_address: r.corporationAddress ?? null,
+    authorized_rep_name: r.authorizedRepName ?? null,
+    authorized_rep_address: r.authorizedRepAddress ?? null,
+    project_type: r.projectType ?? null,
+    project_nature: r.projectNature ?? null,
+    floor_area: r.floorArea != null ? Number(r.floorArea) : null,
+    right_over_land: r.rightOverLand ?? null,
+    project_tenure: r.projectTenure ?? null,
+    tct_tdn: r.tctTdn ?? null,
+    project_cost: r.projectCost != null ? Number(r.projectCost) : null,
+    release_mode: r.releaseMode ?? null,
+    amount_paid: r.amountPaid != null ? Number(r.amountPaid) : null,
+    date_issued: r.dateIssued ? r.dateIssued.toISOString() : null,
     created_at: r.createdAt.toISOString(),
     updated_at: r.updatedAt.toISOString(),
   };
@@ -137,19 +153,36 @@ router.post("/zoning-records", async (req, res): Promise<void> => {
     return;
   }
 
+  const d = parsed.data;
   const [record] = await db
     .insert(zoningRecordsTable)
     .values({
       referenceNumber: generateRef(),
-      ownerName: parsed.data.owner_name,
-      ownerContact: parsed.data.owner_contact ?? null,
-      barangay: parsed.data.barangay,
-      address: parsed.data.address,
-      zoneType: parsed.data.zone_type as any,
-      landArea: parsed.data.land_area?.toString() ?? null,
-      gpsLat: parsed.data.gps_lat?.toString() ?? null,
-      gpsLng: parsed.data.gps_lng?.toString() ?? null,
-      notes: parsed.data.notes ?? null,
+      ownerName: d.owner_name,
+      ownerContact: d.owner_contact ?? null,
+      barangay: d.barangay,
+      address: d.address,
+      zoneType: d.zone_type as any,
+      landArea: d.land_area?.toString() ?? null,
+      gpsLat: d.gps_lat?.toString() ?? null,
+      gpsLng: d.gps_lng?.toString() ?? null,
+      notes: d.notes ?? null,
+      orNo: d.or_no ?? null,
+      dateOfPayment: d.date_of_payment ? new Date(d.date_of_payment) : null,
+      corporationName: d.corporation_name ?? null,
+      corporationAddress: d.corporation_address ?? null,
+      authorizedRepName: d.authorized_rep_name ?? null,
+      authorizedRepAddress: d.authorized_rep_address ?? null,
+      projectType: d.project_type ?? null,
+      projectNature: d.project_nature ?? null,
+      floorArea: d.floor_area?.toString() ?? null,
+      rightOverLand: d.right_over_land ?? null,
+      projectTenure: d.project_tenure ?? null,
+      tctTdn: d.tct_tdn ?? null,
+      projectCost: d.project_cost?.toString() ?? null,
+      releaseMode: d.release_mode ?? null,
+      amountPaid: d.amount_paid?.toString() ?? null,
+      dateIssued: d.date_issued ? new Date(d.date_issued) : null,
     })
     .returning();
 
@@ -197,17 +230,34 @@ router.patch("/zoning-records/:id", async (req, res): Promise<void> => {
     return;
   }
 
+  const d = parsed.data;
   const updateData: Partial<typeof zoningRecordsTable.$inferInsert> = {};
-  if (parsed.data.owner_name !== undefined) updateData.ownerName = parsed.data.owner_name;
-  if (parsed.data.owner_contact !== undefined) updateData.ownerContact = parsed.data.owner_contact;
-  if (parsed.data.barangay !== undefined) updateData.barangay = parsed.data.barangay;
-  if (parsed.data.address !== undefined) updateData.address = parsed.data.address;
-  if (parsed.data.zone_type !== undefined) updateData.zoneType = parsed.data.zone_type as any;
-  if (parsed.data.status !== undefined) updateData.status = parsed.data.status as any;
-  if (parsed.data.land_area !== undefined) updateData.landArea = parsed.data.land_area?.toString();
-  if (parsed.data.gps_lat !== undefined) updateData.gpsLat = parsed.data.gps_lat?.toString();
-  if (parsed.data.gps_lng !== undefined) updateData.gpsLng = parsed.data.gps_lng?.toString();
-  if (parsed.data.notes !== undefined) updateData.notes = parsed.data.notes;
+  if (d.owner_name !== undefined) updateData.ownerName = d.owner_name;
+  if (d.owner_contact !== undefined) updateData.ownerContact = d.owner_contact;
+  if (d.barangay !== undefined) updateData.barangay = d.barangay;
+  if (d.address !== undefined) updateData.address = d.address;
+  if (d.zone_type !== undefined) updateData.zoneType = d.zone_type as any;
+  if (d.status !== undefined) updateData.status = d.status as any;
+  if (d.land_area !== undefined) updateData.landArea = d.land_area?.toString();
+  if (d.gps_lat !== undefined) updateData.gpsLat = d.gps_lat?.toString();
+  if (d.gps_lng !== undefined) updateData.gpsLng = d.gps_lng?.toString();
+  if (d.notes !== undefined) updateData.notes = d.notes;
+  if (d.or_no !== undefined) updateData.orNo = d.or_no;
+  if (d.date_of_payment !== undefined) updateData.dateOfPayment = d.date_of_payment ? new Date(d.date_of_payment) : null;
+  if (d.corporation_name !== undefined) updateData.corporationName = d.corporation_name;
+  if (d.corporation_address !== undefined) updateData.corporationAddress = d.corporation_address;
+  if (d.authorized_rep_name !== undefined) updateData.authorizedRepName = d.authorized_rep_name;
+  if (d.authorized_rep_address !== undefined) updateData.authorizedRepAddress = d.authorized_rep_address;
+  if (d.project_type !== undefined) updateData.projectType = d.project_type;
+  if (d.project_nature !== undefined) updateData.projectNature = d.project_nature;
+  if (d.floor_area !== undefined) updateData.floorArea = d.floor_area?.toString();
+  if (d.right_over_land !== undefined) updateData.rightOverLand = d.right_over_land;
+  if (d.project_tenure !== undefined) updateData.projectTenure = d.project_tenure;
+  if (d.tct_tdn !== undefined) updateData.tctTdn = d.tct_tdn;
+  if (d.project_cost !== undefined) updateData.projectCost = d.project_cost?.toString();
+  if (d.release_mode !== undefined) updateData.releaseMode = d.release_mode;
+  if (d.amount_paid !== undefined) updateData.amountPaid = d.amount_paid?.toString();
+  if (d.date_issued !== undefined) updateData.dateIssued = d.date_issued ? new Date(d.date_issued) : null;
 
   const [record] = await db
     .update(zoningRecordsTable)
