@@ -1,4 +1,3 @@
-import { useRef } from "react";
 import { Sun, Moon, Monitor, Map, Info, ExternalLink, ImageIcon, Upload, Trash2 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Link } from "wouter";
@@ -13,11 +12,11 @@ export default function Settings() {
   const { theme, setTheme } = useTheme();
   const { logoUrl, saveLogo, removeLogo } = useAppLogo();
   const { toast } = useToast();
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
+    e.target.value = "";
 
     const allowed = ["image/jpeg", "image/jpg", "image/png"];
     if (!allowed.includes(file.type)) {
@@ -31,7 +30,6 @@ export default function Settings() {
 
     await saveLogo(file);
     toast({ title: "Logo updated", description: "The new logo will appear on the login screen." });
-    if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
   function handleRemove() {
@@ -98,16 +96,22 @@ export default function Settings() {
               <p className="text-sm text-muted-foreground">
                 {logoUrl ? "Custom logo is active." : "Using the default map icon."}
               </p>
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="gap-1.5"
-                  onClick={() => fileInputRef.current?.click()}
+              <div className="flex gap-2 flex-wrap">
+                {/* Label triggers the file input natively — no JS click() needed */}
+                <label
+                  htmlFor="logo-file-input"
+                  className="inline-flex items-center gap-1.5 rounded-md border border-input bg-background px-3 py-1.5 text-sm font-medium shadow-sm hover:bg-accent hover:text-accent-foreground cursor-pointer transition-colors"
                 >
                   <Upload className="h-3.5 w-3.5" />
-                  {logoUrl ? "Replace" : "Upload Logo"}
-                </Button>
+                  {logoUrl ? "Replace Logo" : "Upload Logo"}
+                </label>
+                <input
+                  id="logo-file-input"
+                  type="file"
+                  accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+                  className="sr-only"
+                  onChange={handleFileChange}
+                />
                 {logoUrl && (
                   <Button
                     variant="outline"
@@ -122,13 +126,6 @@ export default function Settings() {
               </div>
             </div>
           </div>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".jpg,.jpeg,.png,image/jpeg,image/png"
-            className="hidden"
-            onChange={handleFileChange}
-          />
           <p className="text-xs text-muted-foreground">
             Accepted formats: JPG, PNG — square images work best (e.g. 256×256 px).
           </p>
