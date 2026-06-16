@@ -77,9 +77,11 @@ export default function Layout({ children }: { children: ReactNode }) {
       <aside className="fixed inset-y-0 left-0 z-10 hidden w-64 flex-col border-r bg-sidebar text-sidebar-foreground lg:flex">
         <div className="flex h-14 items-center border-b border-sidebar-border px-4 lg:h-[60px] lg:px-6">
           <Link href="/dashboard" className="flex items-center gap-2 font-semibold">
-            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
-              <MapIcon className="h-5 w-5" />
-            </div>
+            <img
+              src="/tago-logo.png"
+              alt="Municipality of Tago Official Seal"
+              className="h-9 w-9 rounded-full object-cover shrink-0"
+            />
             <span className="text-lg">Zoning System</span>
           </Link>
         </div>
