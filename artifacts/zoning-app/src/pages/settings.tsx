@@ -1,4 +1,5 @@
-import { Sun, Moon, Monitor, Map, Info, ExternalLink, ImageIcon, Upload, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { Sun, Moon, Monitor, Map, Info, ExternalLink, ImageIcon, Upload, Trash2, Database, Download } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Link } from "wouter";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,11 +8,46 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { useAppLogo } from "@/hooks/use-app-logo";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/auth-context";
 
 export default function Settings() {
   const { theme, setTheme } = useTheme();
   const { logoUrl, saveLogo, removeLogo } = useAppLogo();
   const { toast } = useToast();
+  const { user } = useAuth();
+  const [backingUp, setBackingUp] = useState(false);
+
+  const canBackup = user?.role === "administrator" || user?.role === "planning_officer";
+
+  async function handleBackup() {
+    setBackingUp(true);
+    try {
+      const res = await fetch("/api/backup/download", {
+        method: "POST",
+        credentials: "include",
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        toast({ title: "Backup failed", description: (data as { error?: string }).error ?? "Unknown error.", variant: "destructive" });
+        return;
+      }
+      const blob = await res.blob();
+      const disposition = res.headers.get("Content-Disposition") ?? "";
+      const match = disposition.match(/filename="([^"]+)"/);
+      const filename = match?.[1] ?? `zoning-backup-${Date.now()}.sql`;
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast({ title: "Backup downloaded", description: filename });
+    } catch {
+      toast({ title: "Backup failed", description: "Could not reach the server.", variant: "destructive" });
+    } finally {
+      setBackingUp(false);
+    }
+  }
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -131,6 +167,45 @@ export default function Settings() {
           </p>
         </CardContent>
       </Card>
+
+      {/* Database Backup — admin/planning_officer only */}
+      {canBackup && (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Database className="h-5 w-5 text-primary" />
+            Database Backup
+          </CardTitle>
+          <CardDescription>
+            Download a full SQL dump of the zoning database. Store it in a secure location.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-medium">Full database export</p>
+              <p className="text-sm text-muted-foreground">
+                PostgreSQL plain-text dump — all tables, records, and schema.
+              </p>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5 shrink-0"
+              onClick={handleBackup}
+              disabled={backingUp}
+            >
+              <Download className="h-3.5 w-3.5" />
+              {backingUp ? "Generating…" : "Download Backup"}
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            The backup file is named <code className="font-mono">zoning-backup-YYYY-MM-DDTHH-MM-SS.sql</code>. To restore, run{" "}
+            <code className="font-mono">psql &lt;db&gt; &lt; backup.sql</code>.
+          </p>
+        </CardContent>
+      </Card>
+      )}
 
       {/* KoboToolbox shortcut */}
       <Card>

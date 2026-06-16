@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "wouter";
+import { useAuth } from "@/contexts/auth-context";
 import {
   Plus,
   Search,
@@ -97,6 +98,7 @@ function SectionHeader({ label }: { label: string }) {
 
 export default function ZoningRecords() {
   const queryClient = useQueryClient();
+  const { canEdit } = useAuth();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -226,6 +228,7 @@ export default function ZoningRecords() {
           </SelectContent>
         </Select>
 
+        {canEdit && (
         <Dialog open={createOpen} onOpenChange={setCreateOpen}>
           <DialogTrigger asChild>
             <Button className="ml-auto">
@@ -442,6 +445,7 @@ export default function ZoningRecords() {
             </form>
           </DialogContent>
         </Dialog>
+        )}
       </div>
 
       {/* Table */}
@@ -499,6 +503,7 @@ export default function ZoningRecords() {
                           <Eye className="h-4 w-4" />
                         </Link>
                       </Button>
+                      {canEdit && (
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive">
@@ -523,6 +528,7 @@ export default function ZoningRecords() {
                           </AlertDialogFooter>
                         </AlertDialogContent>
                       </AlertDialog>
+                      )}
                     </div>
                   </TableCell>
                 </TableRow>

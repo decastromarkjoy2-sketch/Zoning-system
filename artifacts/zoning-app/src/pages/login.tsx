@@ -6,16 +6,29 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAppLogo } from "@/hooks/use-app-logo";
+import { useAuth } from "@/contexts/auth-context";
 
 export default function Login() {
   const [, navigate] = useLocation();
   const [email, setEmail] = useState("admin@lgu.gov.ph");
   const [password, setPassword] = useState("password");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const { logoUrl } = useAppLogo();
+  const { login } = useAuth();
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    navigate("/dashboard");
+    setError("");
+    setLoading(true);
+    try {
+      await login(email, password);
+      navigate("/dashboard");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Login failed.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -51,6 +64,7 @@ export default function Login() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="officer@lgu.gov.ph"
                   className="h-11 text-sm"
+                  autoComplete="username"
                   required
                 />
               </div>
@@ -63,11 +77,15 @@ export default function Login() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   className="h-11 text-sm"
+                  autoComplete="current-password"
                   required
                 />
               </div>
-              <Button type="submit" className="w-full h-11 text-base" size="lg">
-                Sign in
+              {error && (
+                <p className="text-sm text-destructive font-medium">{error}</p>
+              )}
+              <Button type="submit" className="w-full h-11 text-base" size="lg" disabled={loading}>
+                {loading ? "Signing in…" : "Sign in"}
               </Button>
             </form>
             <p className="mt-5 text-center text-xs text-muted-foreground">

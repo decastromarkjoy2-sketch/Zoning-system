@@ -1,10 +1,14 @@
 import express, { type Express } from "express";
 import cors from "cors";
+import session from "express-session";
 import pinoHttp from "pino-http";
 import router from "./routes";
 import { logger } from "./lib/logger";
+import "./session.d";
 
 const app: Express = express();
+
+app.set("trust proxy", 1);
 
 app.use(
   pinoHttp({
@@ -25,7 +29,23 @@ app.use(
     },
   }),
 );
-app.use(cors());
+
+app.use(
+  session({
+    name: "zoning.sid",
+    secret: process.env.SESSION_SECRET ?? "dev-secret-change-me",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      maxAge: 8 * 60 * 60 * 1000,
+    },
+  }),
+);
+
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
