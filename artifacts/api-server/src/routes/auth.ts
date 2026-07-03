@@ -2,6 +2,7 @@ import { Router } from "express";
 import { db } from "@workspace/db";
 import { usersTable } from "@workspace/db/schema";
 import { eq } from "drizzle-orm";
+import { verifyPassword, hashPassword, isBcryptHash } from "../lib/password";
 
 const router = Router();
 
@@ -19,7 +20,9 @@ router.post("/auth/login", async (req, res) => {
     .where(eq(usersTable.email, email.toLowerCase().trim()))
     .limit(1);
 
-  if (!user || user.password !== password) {
+  const valid = user ? await verifyPassword(password, user.password) : false;
+
+  if (!user || !valid) {
     res.status(401).json({ error: "Invalid email or password." });
     return;
   }
@@ -27,6 +30,12 @@ router.post("/auth/login", async (req, res) => {
   if (!user.isActive) {
     res.status(403).json({ error: "This account has been deactivated." });
     return;
+  }
+
+  // Transparently upgrade legacy plaintext passwords to bcrypt hashes on successful login.
+  if (!isBcryptHash(user.password)) {
+    const upgraded = await hashPassword(password);
+    await db.update(usersTable).set({ password: upgraded }).where(eq(usersTable.id, user.id));
   }
 
   req.session.userId = user.id;

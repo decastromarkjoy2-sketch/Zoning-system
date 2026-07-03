@@ -1,0 +1,1 @@
+- [Zoning app auth & backups](zoning-app-auth-backups.md) — password hashing convention and local auto-backup design for the municipal zoning system.

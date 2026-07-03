@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Sun, Moon, Monitor, Map, Info, ExternalLink, ImageIcon, Upload, Trash2, Database, Download } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { Sun, Moon, Monitor, Map, Info, ExternalLink, ImageIcon, Upload, Trash2, Database, Download, RefreshCw, Clock, CheckCircle2, XCircle } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Link } from "wouter";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,14 +10,89 @@ import { useAppLogo } from "@/hooks/use-app-logo";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/auth-context";
 
+interface BackupFileInfo {
+  filename: string;
+  sizeBytes: number;
+  createdAt: string;
+}
+
+interface BackupStatus {
+  lastRunAt: string | null;
+  lastRunStatus: "success" | "failed" | null;
+  lastError: string | null;
+  nextRunAt: string | null;
+  intervalHours: number;
+  running: boolean;
+  backups: BackupFileInfo[];
+}
+
 export default function Settings() {
   const { theme, setTheme } = useTheme();
   const { logoUrl, saveLogo, removeLogo } = useAppLogo();
   const { toast } = useToast();
   const { user } = useAuth();
   const [backingUp, setBackingUp] = useState(false);
+  const [runningNow, setRunningNow] = useState(false);
+  const [backupStatus, setBackupStatus] = useState<BackupStatus | null>(null);
+  const [statusLoading, setStatusLoading] = useState(true);
 
   const canBackup = user?.role === "administrator" || user?.role === "planning_officer";
+
+  const fetchStatus = useCallback(async () => {
+    try {
+      const res = await fetch("/api/backup/status", { credentials: "include" });
+      if (res.ok) {
+        setBackupStatus(await res.json());
+      }
+    } catch {
+      // ignore — status panel just stays empty
+    } finally {
+      setStatusLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (canBackup) fetchStatus();
+  }, [canBackup, fetchStatus]);
+
+  async function handleRunNow() {
+    setRunningNow(true);
+    try {
+      const res = await fetch("/api/backup/run-now", { method: "POST", credentials: "include" });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        toast({ title: "Backup failed", description: (data as { error?: string }).error ?? "Unknown error.", variant: "destructive" });
+      } else {
+        toast({ title: "Backup created", description: (data as { filename?: string }).filename });
+      }
+      await fetchStatus();
+    } catch {
+      toast({ title: "Backup failed", description: "Could not reach the server.", variant: "destructive" });
+    } finally {
+      setRunningNow(false);
+    }
+  }
+
+  async function handleDownloadLocal(filename: string) {
+    const res = await fetch(`/api/backup/local/${encodeURIComponent(filename)}`, { credentials: "include" });
+    if (!res.ok) {
+      toast({ title: "Download failed", description: "Could not fetch backup file.", variant: "destructive" });
+      return;
+    }
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function formatBytes(bytes: number) {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  }
 
   async function handleBackup() {
     setBackingUp(true);
@@ -168,24 +243,82 @@ export default function Settings() {
         </CardContent>
       </Card>
 
-      {/* Database Backup — admin/planning_officer only */}
+      {/* Automatic local backups — admin/planning_officer only */}
       {canBackup && (
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Database className="h-5 w-5 text-primary" />
-            Database Backup
+            Automatic Backups
           </CardTitle>
           <CardDescription>
-            Download a full SQL dump of the zoning database. Store it in a secure location.
+            The server automatically saves a full database dump to local disk every {backupStatus?.intervalHours ?? 24} hours, keeping the 14 most recent copies.
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-3">
+        <CardContent className="space-y-4">
+          {statusLoading ? (
+            <p className="text-sm text-muted-foreground">Loading backup status…</p>
+          ) : (
+            <>
+              <div className="grid grid-cols-2 gap-y-3 text-sm rounded-lg border bg-muted/30 p-3">
+                <div>
+                  <p className="text-muted-foreground flex items-center gap-1.5"><Clock className="h-3.5 w-3.5" /> Last run</p>
+                  <p className="font-medium flex items-center gap-1.5 mt-0.5">
+                    {backupStatus?.lastRunAt ? new Date(backupStatus.lastRunAt).toLocaleString() : "Not yet run"}
+                    {backupStatus?.lastRunStatus === "success" && <CheckCircle2 className="h-3.5 w-3.5 text-green-600" />}
+                    {backupStatus?.lastRunStatus === "failed" && <XCircle className="h-3.5 w-3.5 text-destructive" />}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground flex items-center gap-1.5"><Clock className="h-3.5 w-3.5" /> Next run</p>
+                  <p className="font-medium mt-0.5">
+                    {backupStatus?.nextRunAt ? new Date(backupStatus.nextRunAt).toLocaleString() : "—"}
+                  </p>
+                </div>
+                {backupStatus?.lastError && (
+                  <div className="col-span-2">
+                    <p className="text-xs text-destructive">{backupStatus.lastError}</p>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-muted-foreground">
+                  {backupStatus?.backups.length ?? 0} backup{(backupStatus?.backups.length ?? 0) === 1 ? "" : "s"} stored on disk
+                </p>
+                <Button variant="outline" size="sm" className="gap-1.5" onClick={handleRunNow} disabled={runningNow}>
+                  <RefreshCw className={`h-3.5 w-3.5 ${runningNow ? "animate-spin" : ""}`} />
+                  {runningNow ? "Backing up…" : "Run Backup Now"}
+                </Button>
+              </div>
+
+              {backupStatus && backupStatus.backups.length > 0 && (
+                <div className="rounded-lg border divide-y max-h-56 overflow-y-auto">
+                  {backupStatus.backups.map((b) => (
+                    <div key={b.filename} className="flex items-center justify-between px-3 py-2 text-sm">
+                      <div className="min-w-0">
+                        <p className="font-mono text-xs truncate">{b.filename}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(b.createdAt).toLocaleString()} · {formatBytes(b.sizeBytes)}
+                        </p>
+                      </div>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => handleDownloadLocal(b.filename)}>
+                        <Download className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+
+          <Separator />
+
           <div className="flex items-center justify-between">
             <div>
-              <p className="font-medium">Full database export</p>
-              <p className="text-sm text-muted-foreground">
-                PostgreSQL plain-text dump — all tables, records, and schema.
+              <p className="font-medium text-sm">Download a backup now</p>
+              <p className="text-xs text-muted-foreground">
+                Generates a fresh dump and downloads it directly, without saving it to the server.
               </p>
             </div>
             <Button
@@ -196,12 +329,11 @@ export default function Settings() {
               disabled={backingUp}
             >
               <Download className="h-3.5 w-3.5" />
-              {backingUp ? "Generating…" : "Download Backup"}
+              {backingUp ? "Generating…" : "Download"}
             </Button>
           </div>
           <p className="text-xs text-muted-foreground">
-            The backup file is named <code className="font-mono">zoning-backup-YYYY-MM-DDTHH-MM-SS.sql</code>. To restore, run{" "}
-            <code className="font-mono">psql &lt;db&gt; &lt; backup.sql</code>.
+            To restore any backup file, run <code className="font-mono">psql &lt;db&gt; &lt; backup.sql</code>.
           </p>
         </CardContent>
       </Card>

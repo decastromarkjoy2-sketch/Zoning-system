@@ -9,6 +9,7 @@ import {
   DeleteUserParams,
   ListUsersQueryParams,
 } from "@workspace/api-zod";
+import { hashPassword } from "../lib/password";
 
 const router: IRouter = Router();
 
@@ -64,7 +65,7 @@ router.post("/users", async (req, res): Promise<void> => {
       name: parsed.data.name,
       email: parsed.data.email,
       role: parsed.data.role as any,
-      password: parsed.data.password,
+      password: await hashPassword(parsed.data.password),
     })
     .returning();
 
@@ -117,7 +118,7 @@ router.patch("/users/:id", async (req, res): Promise<void> => {
   if (parsed.data.email !== undefined) updateData.email = parsed.data.email;
   if (parsed.data.role !== undefined) updateData.role = parsed.data.role as any;
   if (parsed.data.is_active !== undefined) updateData.isActive = parsed.data.is_active;
-  if (parsed.data.password != null) updateData.password = parsed.data.password;
+  if (parsed.data.password != null) updateData.password = await hashPassword(parsed.data.password);
 
   const [user] = await db
     .update(usersTable)
