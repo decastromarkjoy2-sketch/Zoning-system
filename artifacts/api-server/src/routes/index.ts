@@ -11,6 +11,7 @@ import auditRouter from "./audit";
 import notificationsRouter from "./notifications";
 import reportsRouter from "./reports";
 import backupRouter from "./backup";
+import appConfigRouter from "./app-config";
 
 const router: IRouter = Router();
 
@@ -26,5 +27,6 @@ router.use(auditRouter);
 router.use(notificationsRouter);
 router.use(reportsRouter);
 router.use(backupRouter);
+router.use(appConfigRouter);
 
 export default router;

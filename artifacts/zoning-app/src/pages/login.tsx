@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAppLogo } from "@/hooks/use-app-logo";
+import { useAppBranding } from "@/hooks/use-app-branding";
 import { useAuth } from "@/contexts/auth-context";
 
 export default function Login() {
@@ -15,6 +16,7 @@ export default function Login() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const { logoUrl } = useAppLogo();
+  const { appName, divisionName } = useAppBranding();
   const { login } = useAuth();
 
   async function handleSubmit(e: React.FormEvent) {
@@ -43,8 +45,8 @@ export default function Login() {
             )}
           </div>
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-white tracking-tight">Municipal Zoning System</h1>
-            <p className="text-sm text-white/60 mt-1">Local Government Unit — Planning Division</p>
+            <h1 className="text-3xl font-bold text-white tracking-tight">{appName}</h1>
+            <p className="text-sm text-white/60 mt-1">{divisionName}</p>
           </div>
         </div>
 
@@ -96,10 +98,10 @@ export default function Login() {
 
         <div className="text-center space-y-1">
           <p className="text-xs text-white/50 font-medium tracking-wide">
-            Municipal Zoning Information System v1.0
+            {appName} v1.0
           </p>
           <p className="text-xs text-white/35">
-            © 2026 LGU Planning Division | Designed &amp; Developed by Engr. Mark Joy B. De Castro
+            © 2026 {divisionName} | Designed &amp; Developed by Engr. Mark Joy B. De Castro
           </p>
         </div>
       </div>

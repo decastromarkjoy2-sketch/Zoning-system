@@ -5,3 +5,4 @@ export * from "./kobo_submissions";
 export * from "./approvals";
 export * from "./audit_logs";
 export * from "./notifications";
+export * from "./app_config";

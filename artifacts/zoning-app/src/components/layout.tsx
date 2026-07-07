@@ -21,6 +21,7 @@ import {
 
 import { useGetDashboardSummary } from "@workspace/api-client-react";
 import { useAuth } from "@/contexts/auth-context";
+import { useAppBranding } from "@/hooks/use-app-branding";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -118,6 +119,7 @@ export default function Layout({ children }: { children: ReactNode }) {
   const { user, logout } = useAuth();
 
   const { data: summary } = useGetDashboardSummary();
+  const { appName } = useAppBranding();
 
   const role = user?.role ?? "viewer";
 
@@ -145,7 +147,7 @@ export default function Layout({ children }: { children: ReactNode }) {
               alt="Municipality of Tago Official Seal"
               className="h-9 w-9 rounded-full object-cover shrink-0"
             />
-            <span className="text-lg">Zoning System</span>
+            <span className="text-lg">{appName}</span>
           </Link>
         </div>
 

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Sun, Moon, Monitor, Map, Info, ExternalLink, ImageIcon, Upload, Trash2, Database, Download, RefreshCw, Clock, CheckCircle2, XCircle } from "lucide-react";
+import { Sun, Moon, Monitor, Map, Info, ExternalLink, ImageIcon, Upload, Trash2, Database, Download, RefreshCw, Clock, CheckCircle2, XCircle, Building2 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Link } from "wouter";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,8 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { useAppLogo } from "@/hooks/use-app-logo";
+import { useAppBranding } from "@/hooks/use-app-branding";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/auth-context";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 interface BackupFileInfo {
   filename: string;
@@ -29,8 +32,28 @@ interface BackupStatus {
 export default function Settings() {
   const { theme, setTheme } = useTheme();
   const { logoUrl, saveLogo, removeLogo } = useAppLogo();
+  const { appName, divisionName, saveBranding } = useAppBranding();
   const { toast } = useToast();
   const { user } = useAuth();
+  const [brandingName, setBrandingName] = useState(appName);
+  const [brandingDivision, setBrandingDivision] = useState(divisionName);
+  const [brandingSaving, setBrandingSaving] = useState(false);
+
+  useEffect(() => { setBrandingName(appName); }, [appName]);
+  useEffect(() => { setBrandingDivision(divisionName); }, [divisionName]);
+
+  async function handleSaveBranding() {
+    setBrandingSaving(true);
+    try {
+      await saveBranding(brandingName, brandingDivision);
+      toast({ title: "Branding saved", description: "Application name and division updated." });
+    } catch (err) {
+      toast({ title: "Save failed", description: err instanceof Error ? err.message : "Unknown error.", variant: "destructive" });
+    } finally {
+      setBrandingSaving(false);
+    }
+  }
+
   const [backingUp, setBackingUp] = useState(false);
   const [runningNow, setRunningNow] = useState(false);
   const [backupStatus, setBackupStatus] = useState<BackupStatus | null>(null);
@@ -243,6 +266,46 @@ export default function Settings() {
         </CardContent>
       </Card>
 
+      {/* Branding */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Building2 className="h-5 w-5 text-primary" />
+            Application Branding
+          </CardTitle>
+          <CardDescription>
+            Customize the application name and division label shown on the login screen, sidebar, and throughout the system.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="space-y-1.5">
+              <Label htmlFor="branding-app-name">Application Name</Label>
+              <Input
+                id="branding-app-name"
+                value={brandingName}
+                onChange={(e) => setBrandingName(e.target.value)}
+                placeholder="Municipal Zoning Information System"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="branding-division">Division / LGU Unit</Label>
+              <Input
+                id="branding-division"
+                value={brandingDivision}
+                onChange={(e) => setBrandingDivision(e.target.value)}
+                placeholder="LGU Planning Division"
+              />
+            </div>
+          </div>
+          <div className="flex justify-end">
+            <Button onClick={handleSaveBranding} disabled={brandingSaving} size="sm">
+              {brandingSaving ? "Saving…" : "Save Branding Changes"}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Automatic local backups — admin/planning_officer only */}
       {canBackup && (
       <Card>
@@ -376,7 +439,7 @@ export default function Settings() {
           <div className="grid grid-cols-2 gap-y-3 text-sm">
             <div>
               <p className="text-muted-foreground">Application</p>
-              <p className="font-medium">Municipal Zoning Information System</p>
+              <p className="font-medium">{appName}</p>
             </div>
             <div>
               <p className="text-muted-foreground">Version</p>
@@ -384,7 +447,7 @@ export default function Settings() {
             </div>
             <div>
               <p className="text-muted-foreground">Division</p>
-              <p className="font-medium">LGU Planning Division</p>
+              <p className="font-medium">{divisionName}</p>
             </div>
             <div>
               <p className="text-muted-foreground">Database</p>
