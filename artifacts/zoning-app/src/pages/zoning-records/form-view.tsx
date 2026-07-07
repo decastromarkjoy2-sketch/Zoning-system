@@ -101,7 +101,7 @@ export default function ZoningRecordFormView() {
         {/* FORM 1 */}
         <TabsContent value="form1">
           <div className="printable-form">
-          <div id="form1" className="bg-white text-black border border-gray-300 p-6 font-serif print:border-none print:shadow-none" style={{ fontFamily: "Times New Roman, serif" }}>
+          <div id="form1" className="printable-form-sheet bg-white text-black border border-gray-300 p-6 font-serif print:border-none print:shadow-none" style={{ fontFamily: "Times New Roman, serif" }}>
             {/* Header */}
             <div className="text-center mb-2">
               <p className="text-[9px]">Annex A HLURB Memo. Cr. No. 003 Series of 1985</p>
@@ -268,7 +268,7 @@ export default function ZoningRecordFormView() {
         {/* FORM 2 */}
         <TabsContent value="form2">
           <div className="printable-form">
-          <div id="form2" className="bg-white text-black border border-gray-300 p-6 font-serif print:border-none" style={{ fontFamily: "Times New Roman, serif" }}>
+          <div id="form2" className="printable-form-sheet bg-white text-black border border-gray-300 p-6 font-serif print:border-none" style={{ fontFamily: "Times New Roman, serif" }}>
             {/* Header */}
             <div className="text-center mb-3">
               <p className="text-[9px]">Republic of the Philippines</p>
@@ -404,7 +404,15 @@ export default function ZoningRecordFormView() {
           }
           @page {
             size: 8.5in 13in;
-            margin: 0.5in;
+            margin: 0.25in !important;
+          }
+          .printable-form-sheet {
+            width: 100% !important;
+            max-width: 100% !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            transform: scale(1);
+            transform-origin: top left;
           }
           .no-print { display: none !important; }
           #form1, #form2 { page-break-after: always; }
