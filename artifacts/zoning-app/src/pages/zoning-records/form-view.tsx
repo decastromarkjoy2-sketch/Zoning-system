@@ -419,7 +419,8 @@ export default function ZoningRecordFormView() {
             display: flex !important;
             flex-direction: column !important;
             justify-content: space-between !important;
-            font-size: 11pt !important;
+            font-family: Arial, sans-serif !important;
+            font-size: 12pt !important;
             line-height: 1.4 !important;
           }
 
@@ -432,6 +433,8 @@ export default function ZoningRecordFormView() {
           .printable-form-sheet td,
           .printable-form-sheet th {
             padding: 8px 10px !important;
+            font-family: Arial, sans-serif !important;
+            font-size: 12pt !important;
           }
 
           .signature-section,
