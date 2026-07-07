@@ -6,6 +6,7 @@ import {
   Search,
   Filter,
   Eye,
+  Pencil,
   Trash2,
   ChevronLeft,
   ChevronRight,
@@ -17,6 +18,8 @@ import {
   getListZoningRecordsQueryKey,
   useDeleteZoningRecord,
   useCreateZoningRecord,
+  useUpdateZoningRecord,
+  type ZoningRecord,
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -112,6 +115,15 @@ export default function ZoningRecords() {
   const [projectTenureValue, setProjectTenureValue] = useState("PERMANENT");
   const [releaseModeValue, setReleaseModeValue] = useState("pickup");
 
+  const [editOpen, setEditOpen] = useState(false);
+  const [editRecord, setEditRecord] = useState<ZoningRecord | null>(null);
+  const [editZoneType, setEditZoneType] = useState("residential");
+  const [editProjectNature, setEditProjectNature] = useState("NEW DEVELOPMENT");
+  const [editRightOverLand, setEditRightOverLand] = useState("OWNED");
+  const [editProjectTenure, setEditProjectTenure] = useState("PERMANENT");
+  const [editReleaseMode, setEditReleaseMode] = useState("pickup");
+  const [editShowAdvanced, setEditShowAdvanced] = useState(false);
+
   const params = {
     page,
     limit: 15,
@@ -144,6 +156,69 @@ export default function ZoningRecords() {
       },
     },
   });
+
+  const updateMutation = useUpdateZoningRecord({
+    mutation: {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: getListZoningRecordsQueryKey() });
+        setEditOpen(false);
+        setEditRecord(null);
+      },
+    },
+  });
+
+  function openEditDialog(record: ZoningRecord) {
+    setEditRecord(record);
+    setEditZoneType(record.zone_type);
+    setEditProjectNature(record.project_nature ?? "NEW DEVELOPMENT");
+    setEditRightOverLand(record.right_over_land ?? "OWNED");
+    setEditProjectTenure(record.project_tenure ?? "PERMANENT");
+    setEditReleaseMode(record.release_mode ?? "pickup");
+    setEditShowAdvanced(
+      !!(record.corporation_name || record.authorized_rep_name)
+    );
+    setEditOpen(true);
+  }
+
+  function handleEdit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (!editRecord) return;
+    const form = e.currentTarget;
+    const fd = new FormData(form);
+    const get = (k: string) => (fd.get(k) as string) || undefined;
+    const getNum = (k: string) => (fd.get(k) ? Number(fd.get(k)) : undefined);
+
+    updateMutation.mutate({
+      id: editRecord.id,
+      data: {
+        owner_name: fd.get("owner_name") as string,
+        owner_contact: get("owner_contact"),
+        barangay: fd.get("barangay") as string,
+        address: fd.get("address") as string,
+        zone_type: editZoneType as any,
+        land_area: getNum("land_area"),
+        floor_area: getNum("floor_area"),
+        gps_lat: getNum("gps_lat"),
+        gps_lng: getNum("gps_lng"),
+        notes: get("notes"),
+        or_no: get("or_no"),
+        date_of_payment: get("date_of_payment"),
+        corporation_name: get("corporation_name"),
+        corporation_address: get("corporation_address"),
+        authorized_rep_name: get("authorized_rep_name"),
+        authorized_rep_address: get("authorized_rep_address"),
+        project_type: get("project_type"),
+        project_nature: editProjectNature,
+        right_over_land: editRightOverLand,
+        project_tenure: editProjectTenure,
+        tct_tdn: get("tct_tdn"),
+        project_cost: getNum("project_cost"),
+        amount_paid: getNum("amount_paid"),
+        release_mode: editReleaseMode,
+        date_issued: get("date_issued"),
+      },
+    });
+  }
 
   const totalPages = Math.ceil((data?.total ?? 0) / 15);
 
@@ -498,6 +573,17 @@ export default function ZoningRecords() {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-1">
+                      {canEdit && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8"
+                          title="Edit Record"
+                          onClick={() => openEditDialog(record)}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                      )}
                       <Button asChild variant="ghost" size="icon" className="h-8 w-8" title="View Generated Forms">
                         <Link href={`/zoning-records/${record.id}/form`}>
                           <Eye className="h-4 w-4" />
@@ -537,6 +623,202 @@ export default function ZoningRecords() {
           </TableBody>
         </Table>
       </div>
+
+      {/* Edit Record Dialog */}
+      <Dialog open={editOpen} onOpenChange={setEditOpen}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Record — {editRecord?.reference_number}</DialogTitle>
+            <DialogDescription>
+              Update the application details below. Fields marked * are required.
+            </DialogDescription>
+          </DialogHeader>
+          {editRecord && (
+            <form onSubmit={handleEdit}>
+              <div className="grid grid-cols-2 gap-x-4 gap-y-3 py-2">
+
+                <SectionHeader label="Payment Details" />
+                <div className="space-y-1.5">
+                  <Label htmlFor="edit_or_no">O.R. No.</Label>
+                  <Input id="edit_or_no" name="or_no" defaultValue={editRecord.or_no ?? ""} placeholder="Official Receipt number" />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="edit_date_of_payment">Date of Payment</Label>
+                  <Input id="edit_date_of_payment" name="date_of_payment" type="date" defaultValue={editRecord.date_of_payment?.slice(0, 10) ?? ""} />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="edit_amount_paid">Amount Paid (₱)</Label>
+                  <Input id="edit_amount_paid" name="amount_paid" type="number" step="0.01" defaultValue={editRecord.amount_paid ?? ""} placeholder="0.00" />
+                </div>
+
+                <SectionHeader label="Applicant Information" />
+                <div className="space-y-1.5">
+                  <Label htmlFor="edit_owner_name">Name of Applicant (Last, First, Middle) *</Label>
+                  <Input id="edit_owner_name" name="owner_name" required defaultValue={editRecord.owner_name} />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="edit_owner_contact">Tel. / Contact No.</Label>
+                  <Input id="edit_owner_contact" name="owner_contact" defaultValue={editRecord.owner_contact ?? ""} placeholder="+63 9xx xxx xxxx" />
+                </div>
+                <div className="col-span-2 space-y-1.5">
+                  <Label htmlFor="edit_address">Address of Applicant *</Label>
+                  <Input id="edit_address" name="address" required defaultValue={editRecord.address} />
+                </div>
+
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="col-span-2 -mb-1 justify-start text-muted-foreground"
+                  onClick={() => setEditShowAdvanced((v) => !v)}
+                >
+                  {editShowAdvanced ? <ChevronUp className="mr-1 h-3 w-3" /> : <ChevronDown className="mr-1 h-3 w-3" />}
+                  {editShowAdvanced ? "Hide" : "Show"} Corporation &amp; Representative fields
+                </Button>
+
+                {editShowAdvanced && (
+                  <>
+                    <SectionHeader label="Corporation (if applicable)" />
+                    <div className="space-y-1.5">
+                      <Label htmlFor="edit_corporation_name">Name of Corporation</Label>
+                      <Input id="edit_corporation_name" name="corporation_name" defaultValue={editRecord.corporation_name ?? ""} />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="edit_corporation_address">Address of Corporation</Label>
+                      <Input id="edit_corporation_address" name="corporation_address" defaultValue={editRecord.corporation_address ?? ""} />
+                    </div>
+
+                    <SectionHeader label="Authorized Representative" />
+                    <div className="space-y-1.5">
+                      <Label htmlFor="edit_authorized_rep_name">Name of Authorized Representative</Label>
+                      <Input id="edit_authorized_rep_name" name="authorized_rep_name" defaultValue={editRecord.authorized_rep_name ?? ""} />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="edit_authorized_rep_address">Address of Authorized Representative</Label>
+                      <Input id="edit_authorized_rep_address" name="authorized_rep_address" defaultValue={editRecord.authorized_rep_address ?? ""} />
+                    </div>
+                  </>
+                )}
+
+                <SectionHeader label="Project Details" />
+                <div className="space-y-1.5">
+                  <Label htmlFor="edit_project_type">Project Type</Label>
+                  <Input id="edit_project_type" name="project_type" defaultValue={editRecord.project_type ?? ""} placeholder="e.g. One storey residential building" />
+                </div>
+                <div className="space-y-1.5">
+                  <Label>Project Nature</Label>
+                  <Select value={editProjectNature} onValueChange={setEditProjectNature}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="NEW DEVELOPMENT">New Development</SelectItem>
+                      <SelectItem value="ADDITION/ALTERATION">Addition / Alteration</SelectItem>
+                      <SelectItem value="RENOVATION">Renovation</SelectItem>
+                      <SelectItem value="CHANGE OF USE">Change of Use</SelectItem>
+                      <SelectItem value="TEMPORARY">Temporary</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <SectionHeader label="Project Location &amp; Scope" />
+                <div className="space-y-1.5">
+                  <Label htmlFor="edit_barangay">Barangay *</Label>
+                  <Input id="edit_barangay" name="barangay" required defaultValue={editRecord.barangay} />
+                </div>
+                <div className="space-y-1.5">
+                  <Label>Zone / Land Use *</Label>
+                  <Select value={editZoneType} onValueChange={setEditZoneType}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="residential">Residential</SelectItem>
+                      <SelectItem value="commercial">Commercial</SelectItem>
+                      <SelectItem value="industrial">Industrial</SelectItem>
+                      <SelectItem value="agricultural">Agricultural</SelectItem>
+                      <SelectItem value="institutional">Institutional</SelectItem>
+                      <SelectItem value="protected_area">Protected Area</SelectItem>
+                      <SelectItem value="mixed_use">Mixed Use</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="edit_land_area">Lot Area (sqm)</Label>
+                  <Input id="edit_land_area" name="land_area" type="number" step="0.01" defaultValue={editRecord.land_area ?? ""} placeholder="0.00" />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="edit_floor_area">Floor Area (sqm)</Label>
+                  <Input id="edit_floor_area" name="floor_area" type="number" step="0.01" defaultValue={editRecord.floor_area ?? ""} placeholder="0.00" />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="edit_gps_lat">GPS Latitude</Label>
+                  <Input id="edit_gps_lat" name="gps_lat" type="number" step="0.0000001" defaultValue={editRecord.gps_lat ?? ""} placeholder="9.6312" />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="edit_gps_lng">GPS Longitude</Label>
+                  <Input id="edit_gps_lng" name="gps_lng" type="number" step="0.0000001" defaultValue={editRecord.gps_lng ?? ""} placeholder="126.1978" />
+                </div>
+
+                <SectionHeader label="Land &amp; Tenure" />
+                <div className="space-y-1.5">
+                  <Label>Right Over Land</Label>
+                  <Select value={editRightOverLand} onValueChange={setEditRightOverLand}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="OWNED">Owned</SelectItem>
+                      <SelectItem value="WITH CONSENT">With Consent of Owner</SelectItem>
+                      <SelectItem value="LEASED">Leased</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label>Project Tenure</Label>
+                  <Select value={editProjectTenure} onValueChange={setEditProjectTenure}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="PERMANENT">Permanent</SelectItem>
+                      <SelectItem value="TEMPORARY">Temporary</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="edit_tct_tdn">TCT / TDN No.</Label>
+                  <Input id="edit_tct_tdn" name="tct_tdn" defaultValue={editRecord.tct_tdn ?? ""} placeholder="TCT-XXXXXXX or TDN-XXXXXXX" />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="edit_project_cost">Project Cost (₱)</Label>
+                  <Input id="edit_project_cost" name="project_cost" type="number" step="0.01" defaultValue={editRecord.project_cost ?? ""} placeholder="0.00" />
+                </div>
+
+                <SectionHeader label="Release of Decision" />
+                <div className="space-y-1.5">
+                  <Label>Preferred Mode of Release</Label>
+                  <Select value={editReleaseMode} onValueChange={setEditReleaseMode}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="pickup">Pick-up</SelectItem>
+                      <SelectItem value="mail">Mail</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="edit_date_issued">Date Issued</Label>
+                  <Input id="edit_date_issued" name="date_issued" type="date" defaultValue={editRecord.date_issued?.slice(0, 10) ?? ""} />
+                </div>
+
+                <div className="col-span-2 space-y-1.5">
+                  <Label htmlFor="edit_notes">Notes / Remarks</Label>
+                  <Textarea id="edit_notes" name="notes" rows={2} defaultValue={editRecord.notes ?? ""} placeholder="Additional notes..." />
+                </div>
+              </div>
+
+              <DialogFooter className="mt-4">
+                <Button type="button" variant="outline" onClick={() => setEditOpen(false)}>Cancel</Button>
+                <Button type="submit" disabled={updateMutation.isPending}>
+                  {updateMutation.isPending ? "Saving..." : "Save Changes"}
+                </Button>
+              </DialogFooter>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* Pagination */}
       {(data?.total ?? 0) > 15 && (
