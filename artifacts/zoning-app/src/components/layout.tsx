@@ -22,6 +22,7 @@ import {
 import { useGetDashboardSummary } from "@workspace/api-client-react";
 import { useAuth } from "@/contexts/auth-context";
 import { useAppBranding } from "@/hooks/use-app-branding";
+import { useAppLogo } from "@/hooks/use-app-logo";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -120,6 +121,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 
   const { data: summary } = useGetDashboardSummary();
   const { appName } = useAppBranding();
+  const { logoUrl } = useAppLogo();
 
   const role = user?.role ?? "viewer";
 
@@ -143,8 +145,8 @@ export default function Layout({ children }: { children: ReactNode }) {
         <div className="flex h-14 items-center border-b border-sidebar-border px-4 lg:h-[60px] lg:px-6">
           <Link href="/dashboard" className="flex items-center gap-2 font-semibold">
             <img
-              src="/tago-logo.png"
-              alt="Municipality of Tago Official Seal"
+              src={logoUrl ?? "/tago-logo.png"}
+              alt="Organization logo"
               className="h-9 w-9 rounded-full object-cover shrink-0"
             />
             <span className="text-lg">{appName}</span>

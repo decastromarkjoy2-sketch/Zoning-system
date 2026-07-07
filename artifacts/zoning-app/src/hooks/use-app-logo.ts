@@ -28,6 +28,7 @@ export function useAppLogo() {
         const dataUrl = reader.result as string;
         localStorage.setItem(STORAGE_KEY, dataUrl);
         setLogoUrl(dataUrl);
+        window.dispatchEvent(new StorageEvent("storage", { key: STORAGE_KEY, newValue: dataUrl }));
         resolve();
       };
       reader.onerror = reject;
@@ -38,6 +39,7 @@ export function useAppLogo() {
   function removeLogo() {
     localStorage.removeItem(STORAGE_KEY);
     setLogoUrl(null);
+    window.dispatchEvent(new StorageEvent("storage", { key: STORAGE_KEY, newValue: null }));
   }
 
   return { logoUrl, saveLogo, removeLogo };
