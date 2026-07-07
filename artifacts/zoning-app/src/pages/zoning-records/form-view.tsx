@@ -117,10 +117,6 @@ export default function ZoningRecordFormView() {
                   <p className="text-[9px] font-bold">Municipality of Tago</p>
                 </div>
                 <div className="text-right text-[8px] w-48">
-                  <p className="font-bold">EnP JUBERT D. TUTOR</p>
-                  <p>Municipal Planning and Development Coordinator</p>
-                  <br />
-                  <p className="font-bold">Zoning Officer - Designate</p>
                 </div>
               </div>
             </div>
@@ -389,6 +385,7 @@ export default function ZoningRecordFormView() {
       </Tabs>
 
       <style>{`
+        @page { size: 8.5in 13in; margin: 0.5in; }
         @media print {
           .no-print { display: none !important; }
           body { background: white; }
