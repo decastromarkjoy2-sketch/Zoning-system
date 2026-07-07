@@ -1,4 +1,5 @@
 import { useRoute, Link } from "wouter";
+import { useAppBranding } from "@/hooks/use-app-branding";
 import { ArrowLeft, Printer } from "lucide-react";
 import {
   useGetZoningRecord,
@@ -48,6 +49,7 @@ function FormDivider({ label }: { label: string }) {
 export default function ZoningRecordFormView() {
   const [, params] = useRoute("/zoning-records/:id/form");
   const id = Number(params?.id);
+  const { municipalityName } = useAppBranding();
 
   const { data: record, isLoading } = useGetZoningRecord(id, {
     query: { enabled: !!id, queryKey: getGetZoningRecordQueryKey(id) },
@@ -115,7 +117,7 @@ export default function ZoningRecordFormView() {
                 <div className="text-center flex-1">
                   <p className="text-[9px] font-bold">Republic of the Philippines</p>
                   <p className="text-[9px] font-bold">Province of Surigao del Sur</p>
-                  <p className="text-[9px] font-bold">Municipality of Tago</p>
+                  <p className="text-[9px] font-bold">{municipalityName}</p>
                 </div>
                 <div className="text-right text-[8px] w-48">
                 </div>

@@ -6,6 +6,7 @@ export const appConfigTable = pgTable("app_config", {
   id: serial("id").primaryKey(),
   appName: text("app_name").notNull().default("Municipal Zoning Information System"),
   divisionName: text("division_name").notNull().default("LGU Planning Division"),
+  municipalityName: text("municipality_name").notNull().default("Municipality of Tago"),
   updatedAt: timestamp("updated_at", { withTimezone: true })
     .notNull()
     .defaultNow()

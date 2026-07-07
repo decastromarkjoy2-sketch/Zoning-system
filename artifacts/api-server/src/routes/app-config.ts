@@ -14,7 +14,7 @@ async function getOrCreateConfig() {
 
 router.get("/app-config", async (req, res): Promise<void> => {
   const config = await getOrCreateConfig();
-  res.json({ app_name: config.appName, division_name: config.divisionName });
+  res.json({ app_name: config.appName, division_name: config.divisionName, municipality_name: config.municipalityName });
 });
 
 router.patch("/app-config", async (req, res): Promise<void> => {
@@ -30,13 +30,14 @@ router.patch("/app-config", async (req, res): Promise<void> => {
     return;
   }
 
-  const { app_name, division_name } = req.body as { app_name?: string; division_name?: string };
+  const { app_name, division_name, municipality_name } = req.body as { app_name?: string; division_name?: string; municipality_name?: string };
 
   const config = await getOrCreateConfig();
 
-  const updates: { appName?: string; divisionName?: string } = {};
+  const updates: { appName?: string; divisionName?: string; municipalityName?: string } = {};
   if (typeof app_name === "string") updates.appName = app_name.trim() || "Municipal Zoning Information System";
   if (typeof division_name === "string") updates.divisionName = division_name.trim() || "LGU Planning Division";
+  if (typeof municipality_name === "string") updates.municipalityName = municipality_name.trim() || "Municipality of Tago";
 
   const [updated] = await db
     .update(appConfigTable)
@@ -44,7 +45,7 @@ router.patch("/app-config", async (req, res): Promise<void> => {
     .where(eq(appConfigTable.id, config.id))
     .returning();
 
-  res.json({ app_name: updated.appName, division_name: updated.divisionName });
+  res.json({ app_name: updated.appName, division_name: updated.divisionName, municipality_name: updated.municipalityName });
 });
 
 export default router;

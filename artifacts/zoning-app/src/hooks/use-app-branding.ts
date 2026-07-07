@@ -5,11 +5,13 @@ const STORAGE_KEY = "zoning-app-branding";
 const DEFAULTS = {
   appName: "Municipal Zoning Information System",
   divisionName: "LGU Planning Division",
+  municipalityName: "Municipality of Tago",
 };
 
 interface Branding {
   appName: string;
   divisionName: string;
+  municipalityName: string;
 }
 
 function readCache(): Branding {
@@ -39,7 +41,7 @@ export function useAppBranding() {
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         if (data?.app_name !== undefined) {
-          const b: Branding = { appName: data.app_name, divisionName: data.division_name };
+          const b: Branding = { appName: data.app_name, divisionName: data.division_name, municipalityName: data.municipality_name ?? DEFAULTS.municipalityName };
           setBranding(b);
           writeCache(b);
         }
@@ -61,19 +63,19 @@ export function useAppBranding() {
     return () => window.removeEventListener("storage", onStorage);
   }, []);
 
-  async function saveBranding(appName: string, divisionName: string): Promise<void> {
+  async function saveBranding(appName: string, divisionName: string, municipalityName: string): Promise<void> {
     const res = await fetch("/api/app-config", {
       method: "PATCH",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ app_name: appName, division_name: divisionName }),
+      body: JSON.stringify({ app_name: appName, division_name: divisionName, municipality_name: municipalityName }),
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
       throw new Error((err as { error?: string }).error ?? "Failed to save branding.");
     }
     const data = await res.json();
-    const b: Branding = { appName: data.app_name, divisionName: data.division_name };
+    const b: Branding = { appName: data.app_name, divisionName: data.division_name, municipalityName: data.municipality_name ?? DEFAULTS.municipalityName };
     setBranding(b);
     writeCache(b);
   }

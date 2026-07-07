@@ -32,21 +32,23 @@ interface BackupStatus {
 export default function Settings() {
   const { theme, setTheme } = useTheme();
   const { logoUrl, saveLogo, removeLogo } = useAppLogo();
-  const { appName, divisionName, saveBranding } = useAppBranding();
+  const { appName, divisionName, municipalityName, saveBranding } = useAppBranding();
   const { toast } = useToast();
   const { user } = useAuth();
   const [brandingName, setBrandingName] = useState(appName);
   const [brandingDivision, setBrandingDivision] = useState(divisionName);
+  const [brandingMunicipality, setBrandingMunicipality] = useState(municipalityName);
   const [brandingSaving, setBrandingSaving] = useState(false);
 
   useEffect(() => { setBrandingName(appName); }, [appName]);
   useEffect(() => { setBrandingDivision(divisionName); }, [divisionName]);
+  useEffect(() => { setBrandingMunicipality(municipalityName); }, [municipalityName]);
 
   async function handleSaveBranding() {
     setBrandingSaving(true);
     try {
-      await saveBranding(brandingName, brandingDivision);
-      toast({ title: "Branding saved", description: "Application name and division updated." });
+      await saveBranding(brandingName, brandingDivision, brandingMunicipality);
+      toast({ title: "Branding saved", description: "Application name, division, and municipality updated." });
     } catch (err) {
       toast({ title: "Save failed", description: err instanceof Error ? err.message : "Unknown error.", variant: "destructive" });
     } finally {
@@ -295,6 +297,15 @@ export default function Settings() {
                 value={brandingDivision}
                 onChange={(e) => setBrandingDivision(e.target.value)}
                 placeholder="LGU Planning Division"
+              />
+            </div>
+            <div className="space-y-1.5 sm:col-span-2">
+              <Label htmlFor="branding-municipality">Municipality/City Name</Label>
+              <Input
+                id="branding-municipality"
+                value={brandingMunicipality}
+                onChange={(e) => setBrandingMunicipality(e.target.value)}
+                placeholder="Municipality of Tago"
               />
             </div>
           </div>
