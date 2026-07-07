@@ -404,15 +404,22 @@ export default function ZoningRecordFormView() {
           }
           @page {
             size: 8.5in 13in;
-            margin: 0.25in !important;
+            margin: 0.3in !important;
           }
           .printable-form-sheet {
+            font-size: 11pt !important;
+            line-height: 1.4 !important;
             width: 100% !important;
-            max-width: 100% !important;
-            padding: 0 !important;
-            margin: 0 !important;
-            transform: scale(1);
-            transform-origin: top left;
+            height: 100% !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: space-between !important;
+          }
+          .printable-form-sheet table,
+          .printable-form-sheet tr,
+          .printable-form-sheet td {
+            padding-top: 6px !important;
+            padding-bottom: 6px !important;
           }
           .no-print { display: none !important; }
           #form1, #form2 { page-break-after: always; }
