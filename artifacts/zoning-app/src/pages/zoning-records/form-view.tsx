@@ -390,6 +390,11 @@ export default function ZoningRecordFormView() {
 
       <style>{`
         @media print {
+          @page {
+            size: 8.5in 13in;
+            margin: 0.3in 0.4in !important;
+          }
+
           body * {
             visibility: hidden !important;
           }
@@ -402,25 +407,39 @@ export default function ZoningRecordFormView() {
             top: 0 !important;
             width: 100% !important;
           }
-          @page {
-            size: 8.5in 13in;
-            margin: 0.3in !important;
-          }
-          .printable-form-sheet {
-            font-size: 11pt !important;
-            line-height: 1.4 !important;
-            width: 100% !important;
+
+          html, body, .printable-form-sheet {
             height: 100% !important;
+            min-height: 100vh !important;
+            box-sizing: border-box !important;
+          }
+
+          .printable-form-sheet {
+            width: 100% !important;
             display: flex !important;
             flex-direction: column !important;
             justify-content: space-between !important;
+            font-size: 11pt !important;
+            line-height: 1.4 !important;
           }
-          .printable-form-sheet table,
-          .printable-form-sheet tr,
-          .printable-form-sheet td {
-            padding-top: 6px !important;
-            padding-bottom: 6px !important;
+
+          .printable-form-sheet table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+            margin-bottom: auto !important;
           }
+
+          .printable-form-sheet td,
+          .printable-form-sheet th {
+            padding: 8px 10px !important;
+          }
+
+          .signature-section,
+          .notary-section {
+            page-break-inside: avoid !important;
+            margin-top: 20px !important;
+          }
+
           .no-print { display: none !important; }
           #form1, #form2 { page-break-after: always; }
         }
