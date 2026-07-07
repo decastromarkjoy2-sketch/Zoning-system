@@ -37,11 +37,13 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[hsl(222,47%,11%)] via-[hsl(217,32%,17%)] to-[hsl(205,78%,20%)] px-4">
       <div className="w-full max-w-lg space-y-7">
         <div className="flex flex-col items-center gap-4">
-          <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-primary shadow-xl overflow-hidden">
+          <div className="mx-auto bg-white p-2 rounded-full shadow-lg w-24 h-24 flex items-center justify-center mb-4">
             {logoUrl ? (
-              <img src={logoUrl} alt="Organization logo" className="h-full w-full object-cover" />
+              <img src={logoUrl} alt="Organization logo" className="object-contain w-full h-full rounded-full" />
             ) : (
-              <Map className="h-11 w-11 text-primary-foreground" />
+              <div className="flex h-full w-full items-center justify-center rounded-full bg-primary">
+                <Map className="h-11 w-11 text-primary-foreground" />
+              </div>
             )}
           </div>
           <div className="text-center">
