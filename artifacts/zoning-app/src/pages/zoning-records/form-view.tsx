@@ -100,6 +100,7 @@ export default function ZoningRecordFormView() {
 
         {/* FORM 1 */}
         <TabsContent value="form1">
+          <div className="printable-form">
           <div id="form1" className="bg-white text-black border border-gray-300 p-6 font-serif print:border-none print:shadow-none" style={{ fontFamily: "Times New Roman, serif" }}>
             {/* Header */}
             <div className="text-center mb-2">
@@ -261,10 +262,12 @@ export default function ZoningRecordFormView() {
               </div>
             </div>
           </div>
+          </div>
         </TabsContent>
 
         {/* FORM 2 */}
         <TabsContent value="form2">
+          <div className="printable-form">
           <div id="form2" className="bg-white text-black border border-gray-300 p-6 font-serif print:border-none" style={{ fontFamily: "Times New Roman, serif" }}>
             {/* Header */}
             <div className="text-center mb-3">
@@ -381,14 +384,29 @@ export default function ZoningRecordFormView() {
               </div>
             </div>
           </div>
+          </div>
         </TabsContent>
       </Tabs>
 
       <style>{`
-        @page { size: 8.5in 13in; margin: 0.5in; }
         @media print {
+          body * {
+            visibility: hidden !important;
+          }
+          .printable-form, .printable-form * {
+            visibility: visible !important;
+          }
+          .printable-form {
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
+          }
+          @page {
+            size: 8.5in 13in;
+            margin: 0.5in;
+          }
           .no-print { display: none !important; }
-          body { background: white; }
           #form1, #form2 { page-break-after: always; }
         }
       `}</style>
