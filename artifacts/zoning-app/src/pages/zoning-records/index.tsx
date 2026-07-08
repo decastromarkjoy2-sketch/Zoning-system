@@ -110,6 +110,7 @@ export default function ZoningRecords() {
   const [showAdvanced, setShowAdvanced] = useState(false);
 
   const [zoneTypeValue, setZoneTypeValue] = useState("residential");
+  const [projectTypeValue, setProjectTypeValue] = useState("RESIDENTIAL");
   const [projectNatureValue, setProjectNatureValue] = useState("NEW DEVELOPMENT");
   const [rightOverLandValue, setRightOverLandValue] = useState("OWNED");
   const [projectTenureValue, setProjectTenureValue] = useState("PERMANENT");
@@ -118,6 +119,7 @@ export default function ZoningRecords() {
   const [editOpen, setEditOpen] = useState(false);
   const [editRecord, setEditRecord] = useState<ZoningRecord | null>(null);
   const [editZoneType, setEditZoneType] = useState("residential");
+  const [editProjectType, setEditProjectType] = useState("RESIDENTIAL");
   const [editProjectNature, setEditProjectNature] = useState("NEW DEVELOPMENT");
   const [editRightOverLand, setEditRightOverLand] = useState("OWNED");
   const [editProjectTenure, setEditProjectTenure] = useState("PERMANENT");
@@ -170,6 +172,7 @@ export default function ZoningRecords() {
   function openEditDialog(record: ZoningRecord) {
     setEditRecord(record);
     setEditZoneType(record.zone_type);
+    setEditProjectType(record.project_type ?? "RESIDENTIAL");
     setEditProjectNature(record.project_nature ?? "NEW DEVELOPMENT");
     setEditRightOverLand(record.right_over_land ?? "OWNED");
     setEditProjectTenure(record.project_tenure ?? "PERMANENT");
@@ -207,7 +210,7 @@ export default function ZoningRecords() {
         corporation_address: get("corporation_address"),
         authorized_rep_name: get("authorized_rep_name"),
         authorized_rep_address: get("authorized_rep_address"),
-        project_type: get("project_type"),
+        project_type: editProjectType,
         project_nature: editProjectNature,
         right_over_land: editRightOverLand,
         project_tenure: editProjectTenure,
@@ -248,7 +251,7 @@ export default function ZoningRecords() {
         corporation_address: get("corporation_address"),
         authorized_rep_name: get("authorized_rep_name"),
         authorized_rep_address: get("authorized_rep_address"),
-        project_type: get("project_type"),
+        project_type: projectTypeValue,
         project_nature: projectNatureValue || get("project_nature"),
         right_over_land: rightOverLandValue,
         project_tenure: projectTenureValue,
@@ -391,8 +394,20 @@ export default function ZoningRecords() {
                 {/* ── Project Details ── */}
                 <SectionHeader label="Project Details" />
                 <div className="space-y-1.5">
-                  <Label htmlFor="project_type">Project Type</Label>
-                  <Input id="project_type" name="project_type" placeholder="e.g. One storey residential building" />
+                  <Label>Project Type</Label>
+                  <Select value={projectTypeValue} onValueChange={setProjectTypeValue}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="RESIDENTIAL">RESIDENTIAL</SelectItem>
+                      <SelectItem value="COMMERCIAL">COMMERCIAL</SelectItem>
+                      <SelectItem value="INDUSTRIAL">INDUSTRIAL</SelectItem>
+                      <SelectItem value="INSTITUTIONAL">INSTITUTIONAL</SelectItem>
+                      <SelectItem value="AGRICULTURAL">AGRICULTURAL</SelectItem>
+                      <SelectItem value="SPECIAL PROJECT">SPECIAL PROJECT</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-1.5">
                   <Label>Project Nature</Label>
@@ -702,8 +717,20 @@ export default function ZoningRecords() {
 
                 <SectionHeader label="Project Details" />
                 <div className="space-y-1.5">
-                  <Label htmlFor="edit_project_type">Project Type</Label>
-                  <Input id="edit_project_type" name="project_type" defaultValue={editRecord.project_type ?? ""} placeholder="e.g. One storey residential building" />
+                  <Label>Project Type</Label>
+                  <Select value={editProjectType} onValueChange={setEditProjectType}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="RESIDENTIAL">RESIDENTIAL</SelectItem>
+                      <SelectItem value="COMMERCIAL">COMMERCIAL</SelectItem>
+                      <SelectItem value="INDUSTRIAL">INDUSTRIAL</SelectItem>
+                      <SelectItem value="INSTITUTIONAL">INSTITUTIONAL</SelectItem>
+                      <SelectItem value="AGRICULTURAL">AGRICULTURAL</SelectItem>
+                      <SelectItem value="SPECIAL PROJECT">SPECIAL PROJECT</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-1.5">
                   <Label>Project Nature</Label>
