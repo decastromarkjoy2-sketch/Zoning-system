@@ -1,5 +1,6 @@
 import { useRoute, Link } from "wouter";
 import { useAppBranding } from "@/hooks/use-app-branding";
+import { useAppLogo } from "@/hooks/use-app-logo";
 import { ArrowLeft, Printer } from "lucide-react";
 import {
   useGetZoningRecord,
@@ -53,6 +54,7 @@ export default function ZoningRecordFormView() {
   const [, params] = useRoute("/zoning-records/:id/form");
   const id = Number(params?.id);
   const { municipalityName } = useAppBranding();
+  const { logoUrl } = useAppLogo();
 
   const { data: record, isLoading } = useGetZoningRecord(id, {
     query: { enabled: !!id, queryKey: getGetZoningRecordQueryKey(id) },
@@ -108,22 +110,29 @@ export default function ZoningRecordFormView() {
           <div className="printable-form">
           <div id="form1" className="printable-form-sheet bg-white text-black border border-gray-300 p-6 font-serif print:border-none print:shadow-none" style={{ fontFamily: "Times New Roman, serif" }}>
             {/* Header */}
-            <div className="text-center mb-2">
-              <p className="text-[9px]">Annex A HLURB Memo. Cr. No. 003 Series of 1985</p>
-              <div className="flex justify-between items-start mt-1">
+            <div className="mb-2">
+              <p className="text-center text-[9px]">Annex A HLURB Memo. Cr. No. 003 Series of 1985</p>
+              <div className="flex justify-between items-start mt-2">
+                {/* Left: application meta */}
                 <div className="text-left text-[9px] space-y-0.5 w-48">
                   <div className="flex gap-1"><span className="font-bold">Application No.:</span><span className="border-b border-black flex-1 min-w-[80px]">{appNo}</span></div>
                   <div className="flex gap-1"><span className="font-bold">Date Received:</span><span className="border-b border-black flex-1 min-w-[80px]">{fmtDate(record.created_at)}</span></div>
                   <div className="flex gap-1"><span className="font-bold">O.R. No.:</span><span className="border-b border-black flex-1 min-w-[80px]">{record.or_no ?? ""}</span></div>
                   <div className="flex gap-1"><span className="font-bold">Date of Payment:</span><span className="border-b border-black flex-1 min-w-[80px]">{fmtDate(record.date_of_payment)}</span></div>
                 </div>
-                <div className="text-center flex-1">
+                {/* Center: logo + jurisdiction text */}
+                <div className="flex flex-col items-center gap-1 flex-1">
+                  {logoUrl ? (
+                    <img src={logoUrl} alt="LGU Logo" className="form-header-logo h-20 w-20 object-contain" />
+                  ) : (
+                    <div className="h-20 w-20 flex items-center justify-center rounded-full border-2 border-black text-[8px] font-bold text-center">LGU</div>
+                  )}
                   <p className="text-[9px] font-bold">Republic of the Philippines</p>
                   <p className="text-[9px] font-bold">Province of Surigao del Sur</p>
                   <p className="text-[9px] font-bold">{municipalityName}</p>
                 </div>
-                <div className="text-right text-[8px] w-48">
-                </div>
+                {/* Right: reserved */}
+                <div className="w-48" />
               </div>
             </div>
 
@@ -275,12 +284,24 @@ export default function ZoningRecordFormView() {
           <div className="printable-form">
           <div id="form2" className="printable-form-sheet bg-white text-black border border-gray-300 p-6 font-serif print:border-none" style={{ fontFamily: "Times New Roman, serif" }}>
             {/* Header */}
-            <div className="text-center mb-3">
-              <p className="text-[9px]">Republic of the Philippines</p>
-              <p className="text-[9px]">Province of Surigao del Sur</p>
-              <p className="text-[11px] font-bold">MUNICIPALITY OF TAGO</p>
-              <p className="text-[9px] mt-1">OFFICE OF THE ZONING ADMINISTRATOR</p>
-              <div className="border-t-2 border-b-2 border-black py-1 my-2">
+            <div className="mb-3">
+              <div className="flex justify-between items-start">
+                <div className="w-24" />
+                {/* Center: logo + jurisdiction text */}
+                <div className="flex flex-col items-center gap-1 flex-1">
+                  {logoUrl ? (
+                    <img src={logoUrl} alt="LGU Logo" className="form-header-logo h-20 w-20 object-contain" />
+                  ) : (
+                    <div className="h-20 w-20 flex items-center justify-center rounded-full border-2 border-black text-[8px] font-bold text-center">LGU</div>
+                  )}
+                  <p className="text-[9px]">Republic of the Philippines</p>
+                  <p className="text-[9px]">Province of Surigao del Sur</p>
+                  <p className="text-[11px] font-bold">{municipalityName}</p>
+                  <p className="text-[9px] mt-1">OFFICE OF THE ZONING ADMINISTRATOR</p>
+                </div>
+                <div className="w-24" />
+              </div>
+              <div className="border-t-2 border-b-2 border-black py-1 my-2 text-center">
                 <p className="text-[13px] font-bold tracking-widest">DECISION ON ZONING</p>
               </div>
             </div>
@@ -441,6 +462,10 @@ export default function ZoningRecordFormView() {
             font-size: 12pt !important;
           }
 
+          .form-header-logo {
+            visibility: visible !important;
+            display: block !important;
+          }
           .no-print { display: none !important; }
           #form1, #form2 { page-break-after: always; }
         }
