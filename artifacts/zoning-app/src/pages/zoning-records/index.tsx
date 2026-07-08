@@ -112,7 +112,7 @@ export default function ZoningRecords() {
   const [zoneTypeValue, setZoneTypeValue] = useState("residential");
   const [projectTypeValue, setProjectTypeValue] = useState("RESIDENTIAL");
   const [projectNatureValue, setProjectNatureValue] = useState("NEW DEVELOPMENT");
-  const [rightOverLandValue, setRightOverLandValue] = useState("OWNED");
+  const [rightOverLandValue, setRightOverLandValue] = useState("PERMANENT");
   const [projectTenureValue, setProjectTenureValue] = useState("PERMANENT");
   const [releaseModeValue, setReleaseModeValue] = useState("pickup");
 
@@ -174,7 +174,7 @@ export default function ZoningRecords() {
     setEditZoneType(record.zone_type);
     setEditProjectType(record.project_type ?? "RESIDENTIAL");
     setEditProjectNature(record.project_nature ?? "NEW DEVELOPMENT");
-    setEditRightOverLand(record.right_over_land ?? "OWNED");
+    setEditRightOverLand(record.right_over_land ?? "PERMANENT");
     setEditProjectTenure(record.project_tenure ?? "PERMANENT");
     setEditReleaseMode(record.release_mode ?? "pickup");
     setEditShowAdvanced(
@@ -473,9 +473,8 @@ export default function ZoningRecords() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="OWNED">Owned</SelectItem>
-                      <SelectItem value="WITH CONSENT">With Consent of Owner</SelectItem>
-                      <SelectItem value="LEASED">Leased</SelectItem>
+                      <SelectItem value="PERMANENT">PERMANENT</SelectItem>
+                      <SelectItem value="TEMPORARY">TEMPORARY</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -787,9 +786,8 @@ export default function ZoningRecords() {
                   <Select value={editRightOverLand} onValueChange={setEditRightOverLand}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="OWNED">Owned</SelectItem>
-                      <SelectItem value="WITH CONSENT">With Consent of Owner</SelectItem>
-                      <SelectItem value="LEASED">Leased</SelectItem>
+                      <SelectItem value="PERMANENT">PERMANENT</SelectItem>
+                      <SelectItem value="TEMPORARY">TEMPORARY</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
