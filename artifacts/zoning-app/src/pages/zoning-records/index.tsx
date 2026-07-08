@@ -416,11 +416,10 @@ export default function ZoningRecords() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="NEW DEVELOPMENT">New Development</SelectItem>
-                      <SelectItem value="ADDITION/ALTERATION">Addition / Alteration</SelectItem>
-                      <SelectItem value="RENOVATION">Renovation</SelectItem>
-                      <SelectItem value="CHANGE OF USE">Change of Use</SelectItem>
-                      <SelectItem value="TEMPORARY">Temporary</SelectItem>
+                      <SelectItem value="NEW DEVELOPMENT">NEW DEVELOPMENT</SelectItem>
+                      <SelectItem value="IMPROVEMENT/EXPANSION">IMPROVEMENT/EXPANSION</SelectItem>
+                      <SelectItem value="CHANGE OF USE">CHANGE OF USE</SelectItem>
+                      <SelectItem value="FENCING">FENCING</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -737,11 +736,10 @@ export default function ZoningRecords() {
                   <Select value={editProjectNature} onValueChange={setEditProjectNature}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="NEW DEVELOPMENT">New Development</SelectItem>
-                      <SelectItem value="ADDITION/ALTERATION">Addition / Alteration</SelectItem>
-                      <SelectItem value="RENOVATION">Renovation</SelectItem>
-                      <SelectItem value="CHANGE OF USE">Change of Use</SelectItem>
-                      <SelectItem value="TEMPORARY">Temporary</SelectItem>
+                      <SelectItem value="NEW DEVELOPMENT">NEW DEVELOPMENT</SelectItem>
+                      <SelectItem value="IMPROVEMENT/EXPANSION">IMPROVEMENT/EXPANSION</SelectItem>
+                      <SelectItem value="CHANGE OF USE">CHANGE OF USE</SelectItem>
+                      <SelectItem value="FENCING">FENCING</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
