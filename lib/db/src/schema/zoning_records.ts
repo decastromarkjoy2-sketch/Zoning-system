@@ -25,6 +25,9 @@ export const zoningRecordsTable = pgTable("zoning_records", {
       "institutional",
       "protected_area",
       "mixed_use",
+      "forest",
+      "parks_recreational",
+      "open_space",
     ],
   }).notNull(),
   status: text("status", {

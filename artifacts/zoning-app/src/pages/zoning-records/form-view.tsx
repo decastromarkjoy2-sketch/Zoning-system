@@ -17,6 +17,9 @@ const ZONE_LABEL: Record<string, string> = {
   institutional: "INSTITUTIONAL ZONE",
   protected_area: "PROTECTED AREA ZONE",
   mixed_use: "MIXED USE ZONE",
+  forest: "FOREST ZONE",
+  parks_recreational: "PARKS AND RECREATIONAL ZONE",
+  open_space: "OPEN SPACE ZONE (VACANT)",
 };
 
 function fmtDate(d?: string | null) {

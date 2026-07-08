@@ -437,13 +437,13 @@ export default function ZoningRecords() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="residential">Residential</SelectItem>
-                      <SelectItem value="commercial">Commercial</SelectItem>
-                      <SelectItem value="industrial">Industrial</SelectItem>
-                      <SelectItem value="agricultural">Agricultural</SelectItem>
-                      <SelectItem value="institutional">Institutional</SelectItem>
-                      <SelectItem value="protected_area">Protected Area</SelectItem>
-                      <SelectItem value="mixed_use">Mixed Use</SelectItem>
+                      <SelectItem value="residential">RESIDENTIAL ZONE</SelectItem>
+                      <SelectItem value="commercial">COMMERCIAL ZONE</SelectItem>
+                      <SelectItem value="industrial">INDUSTRIAL ZONE</SelectItem>
+                      <SelectItem value="institutional">INSTITUTIONAL ZONE</SelectItem>
+                      <SelectItem value="forest">FOREST ZONE</SelectItem>
+                      <SelectItem value="parks_recreational">PARKS AND RECREATIONAL ZONE</SelectItem>
+                      <SelectItem value="open_space">OPEN SPACE ZONE (VACANT)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -753,13 +753,13 @@ export default function ZoningRecords() {
                   <Select value={editZoneType} onValueChange={setEditZoneType}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="residential">Residential</SelectItem>
-                      <SelectItem value="commercial">Commercial</SelectItem>
-                      <SelectItem value="industrial">Industrial</SelectItem>
-                      <SelectItem value="agricultural">Agricultural</SelectItem>
-                      <SelectItem value="institutional">Institutional</SelectItem>
-                      <SelectItem value="protected_area">Protected Area</SelectItem>
-                      <SelectItem value="mixed_use">Mixed Use</SelectItem>
+                      <SelectItem value="residential">RESIDENTIAL ZONE</SelectItem>
+                      <SelectItem value="commercial">COMMERCIAL ZONE</SelectItem>
+                      <SelectItem value="industrial">INDUSTRIAL ZONE</SelectItem>
+                      <SelectItem value="institutional">INSTITUTIONAL ZONE</SelectItem>
+                      <SelectItem value="forest">FOREST ZONE</SelectItem>
+                      <SelectItem value="parks_recreational">PARKS AND RECREATIONAL ZONE</SelectItem>
+                      <SelectItem value="open_space">OPEN SPACE ZONE (VACANT)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
