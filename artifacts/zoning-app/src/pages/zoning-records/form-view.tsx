@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRoute, Link } from "wouter";
 import { useAppBranding } from "@/hooks/use-app-branding";
 import { useAppLogo } from "@/hooks/use-app-logo";
@@ -23,6 +23,19 @@ const ZONE_LABEL: Record<string, string> = {
   parks_recreational: "PARKS AND RECREATIONAL ZONE",
   open_space: "OPEN SPACE ZONE (VACANT)",
 };
+
+const DEFAULT_CONDITIONS = [
+  "All conditions stipulated herein form part of this decision are subject to monitoring.",
+  "Non-compliance therewith shall be a cause for cancellation or legal action.",
+  "The applicable requirements of government agencies and applicable provisions of existing laws shall be complied with.",
+  "No activity other than that applied for shall be conducted within the project site.",
+  "No major expansion, alteration and/or improvement shall be introduced without prior clearance from this office.",
+  "This decision shall not be construed as a certification of LGU as to ownership by the applicant of the parcel of land subject of this decision.",
+  "Any misinterpretation, false statements or allegations materials to the issuance of this decision shall be sufficient cause of its revocation.",
+  "Provisions as to setbacks, yard requirements, bulk easement, area height and other restrictions shall strictly conform with the requirements of the National Building Code and other related laws.",
+  "This decision shall be considered automatically revoked if the project is not commenced within one (1) year from the date of issue of this decision.",
+  "For other conditions, please see the reverse side.",
+];
 
 function fmtDate(d?: string | null) {
   if (!d) return "___________";
@@ -70,7 +83,30 @@ export default function ZoningRecordFormView() {
   const id = Number(params?.id);
   const { municipalityName } = useAppBranding();
   const { logoUrl } = useAppLogo();
-  const [coordinator, setCoordinator] = useState("EnP JUBERT D. TUTOR");
+  const storageKey = `zoning-form-${id}`;
+
+  const [coordinator, setCoordinator] = useState(() => {
+    try {
+      const saved = localStorage.getItem(storageKey);
+      return saved ? (JSON.parse(saved).coordinator ?? "EnP JUBERT D. TUTOR") : "EnP JUBERT D. TUTOR";
+    } catch { return "EnP JUBERT D. TUTOR"; }
+  });
+
+  const [checkedConditions, setCheckedConditions] = useState<boolean[]>(() => {
+    try {
+      const saved = localStorage.getItem(storageKey);
+      const parsed = saved ? JSON.parse(saved).checkedConditions : null;
+      return Array.isArray(parsed) && parsed.length === DEFAULT_CONDITIONS.length
+        ? parsed
+        : DEFAULT_CONDITIONS.map(() => true);
+    } catch { return DEFAULT_CONDITIONS.map(() => true); }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(storageKey, JSON.stringify({ coordinator, checkedConditions }));
+    } catch {}
+  }, [coordinator, checkedConditions, storageKey]);
 
   const { data: record, isLoading } = useGetZoningRecord(id, {
     query: { enabled: !!id, queryKey: getGetZoningRecordQueryKey(id) },
@@ -576,22 +612,18 @@ export default function ZoningRecordFormView() {
                 {/* Conditions */}
                 <div className="border border-black p-2 text-[8px] mb-3">
                   <p className="font-bold mb-1">Conditions:</p>
-                  {[
-                    "All conditions stipulated herein form part of this decision are subject to monitoring.",
-                    "Non-compliance therewith shall be a cause for cancellation or legal action.",
-                    "The applicable requirements of government agencies and applicable provisions of existing laws shall be complied with.",
-                    "No activity other than that applied for shall be conducted within the project site.",
-                    "No major expansion, alteration and/or improvement shall be introduced without prior clearance from this office.",
-                    "This decision shall not be construed as a certification of LGU as to ownership by the applicant of the parcel of land subject of this decision.",
-                    "Any misinterpretation, false statements or allegations materials to the issuance of this decision shall be sufficient cause of its revocation.",
-                    "Provisions as to setbacks, yard requirements, bulk easement, area height and other restrictions shall strictly conform with the requirements of the National Building Code and other related laws.",
-                    "This decision shall be considered automatically revoked if the project is not commenced within one (1) year from the date of issue of this decision.",
-                    "For other conditions, please see the reverse side.",
-                  ].map((c, i) => (
-                    <div key={i} className="flex gap-1 mb-0.5">
-                      <span className="border border-black w-3 h-3 flex-shrink-0 flex items-center justify-center text-[7px] mt-0.5">
-                        ✓
-                      </span>
+                  {DEFAULT_CONDITIONS.map((c, i) => (
+                    <div key={i} className="flex gap-1 mb-0.5 items-start">
+                      <input
+                        type="checkbox"
+                        checked={checkedConditions[i]}
+                        onChange={(e) => {
+                          const next = [...checkedConditions];
+                          next[i] = e.target.checked;
+                          setCheckedConditions(next);
+                        }}
+                        className="mt-0.5 flex-shrink-0 cursor-pointer"
+                      />
                       <span>{c}</span>
                     </div>
                   ))}
@@ -1020,21 +1052,10 @@ export default function ZoningRecordFormView() {
             </div>
             <div className="border border-black p-2 text-[8px] mb-3">
               <p className="font-bold mb-1">Conditions:</p>
-              {[
-                "All conditions stipulated herein form part of this decision are subject to monitoring.",
-                "Non-compliance therewith shall be a cause for cancellation or legal action.",
-                "The applicable requirements of government agencies and applicable provisions of existing laws shall be complied with.",
-                "No activity other than that applied for shall be conducted within the project site.",
-                "No major expansion, alteration and/or improvement shall be introduced without prior clearance from this office.",
-                "This decision shall not be construed as a certification of LGU as to ownership by the applicant of the parcel of land subject of this decision.",
-                "Any misinterpretation, false statements or allegations materials to the issuance of this decision shall be sufficient cause of its revocation.",
-                "Provisions as to setbacks, yard requirements, bulk easement, area height and other restrictions shall strictly conform with the requirements of the National Building Code and other related laws.",
-                "This decision shall be considered automatically revoked if the project is not commenced within one (1) year from the date of issue of this decision.",
-                "For other conditions, please see the reverse side.",
-              ].map((c, i) => (
+              {DEFAULT_CONDITIONS.map((c, i) => (
                 <div key={i} className="flex gap-1 mb-0.5">
                   <span className="border border-black w-3 h-3 flex-shrink-0 flex items-center justify-center text-[7px] mt-0.5">
-                    ✓
+                    {checkedConditions[i] ? "✓" : ""}
                   </span>
                   <span>{c}</span>
                 </div>
