@@ -102,11 +102,18 @@ export default function ZoningRecordFormView() {
     } catch { return DEFAULT_CONDITIONS.map(() => true); }
   });
 
+  const [projectCost, setProjectCost] = useState(() => {
+    try {
+      const saved = localStorage.getItem(storageKey);
+      return saved ? (JSON.parse(saved).projectCost ?? "") : "";
+    } catch { return ""; }
+  });
+
   useEffect(() => {
     try {
-      localStorage.setItem(storageKey, JSON.stringify({ coordinator, checkedConditions }));
+      localStorage.setItem(storageKey, JSON.stringify({ coordinator, checkedConditions, projectCost }));
     } catch {}
-  }, [coordinator, checkedConditions, storageKey]);
+  }, [coordinator, checkedConditions, projectCost, storageKey]);
 
   const { data: record, isLoading } = useGetZoningRecord(id, {
     query: { enabled: !!id, queryKey: getGetZoningRecordQueryKey(id) },
@@ -384,13 +391,19 @@ export default function ZoningRecordFormView() {
                   {/* Row 8: Project Cost */}
                   <div className="border border-black p-1 col-span-2">
                     <div className="font-bold mb-0.5">
-                      15. Project Cost / Capitalization (In Peso, write in words
-                      and figures)
+                      15. Project Cost / Capitalization
                     </div>
-                    <div className="border-b border-black min-h-[18px]">
-                      {record.project_cost
-                        ? `${record.project_cost.toLocaleString("en-PH", { style: "currency", currency: "PHP" })} — ₱${fmtNum(record.project_cost)}`
-                        : ""}
+                    <div className="flex items-center gap-1 mt-0.5">
+                      <span className="font-bold text-[9px]">₱</span>
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={projectCost}
+                        onChange={(e) => setProjectCost(e.target.value)}
+                        placeholder="0.00"
+                        className="border-b border-black flex-1 text-[9px] bg-transparent outline-none min-h-[18px] px-1"
+                      />
                     </div>
                   </div>
 
@@ -849,12 +862,11 @@ export default function ZoningRecordFormView() {
               </div>
               <div className="border border-black p-1 col-span-2">
                 <div className="font-bold mb-0.5">
-                  15. Project Cost / Capitalization (In Peso, write in words and
-                  figures)
+                  15. Project Cost / Capitalization
                 </div>
                 <div className="border-b border-black min-h-[18px]">
-                  {record.project_cost
-                    ? `${record.project_cost.toLocaleString("en-PH", { style: "currency", currency: "PHP" })} — ₱${fmtNum(record.project_cost)}`
+                  {projectCost
+                    ? `₱${Number(projectCost).toLocaleString("en-PH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
                     : ""}
                 </div>
               </div>
