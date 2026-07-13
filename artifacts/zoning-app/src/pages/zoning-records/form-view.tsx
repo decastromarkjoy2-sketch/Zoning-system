@@ -99,6 +99,7 @@ export default function ZoningRecordFormView() {
         </Button>
       </div>
 
+      <div className="no-print">
       <Tabs defaultValue="form1">
         <TabsList className="no-print">
           <TabsTrigger value="form1">Form 1 — Application</TabsTrigger>
@@ -413,8 +414,179 @@ export default function ZoningRecordFormView() {
           </div>
         </TabsContent>
       </Tabs>
+      </div>
+
+      {/* Print-only container: hidden on screen, both forms stacked for printing */}
+      <div className="print-only-forms">
+        {/* FORM 1 — print copy */}
+        <div className="print-form1-break">
+          <div className="printable-form-sheet bg-white text-black border border-gray-300 p-6 font-serif" style={{ fontFamily: "Times New Roman, serif" }}>
+            <div className="mb-2">
+              <p className="text-center text-[9px]">Annex A HLURB Memo. Cr. No. 003 Series of 1985</p>
+              <div className="flex justify-between items-start mt-2">
+                <div className="text-left text-[9px] space-y-0.5 w-48">
+                  <div className="flex gap-1"><span className="font-bold">Application No.:</span><span className="border-b border-black flex-1 min-w-[80px]">{appNo}</span></div>
+                  <div className="flex gap-1"><span className="font-bold">Date Received:</span><span className="border-b border-black flex-1 min-w-[80px]">{fmtDate(record.created_at)}</span></div>
+                  <div className="flex gap-1"><span className="font-bold">O.R. No.:</span><span className="border-b border-black flex-1 min-w-[80px]">{record.or_no ?? ""}</span></div>
+                  <div className="flex gap-1"><span className="font-bold">Date of Payment:</span><span className="border-b border-black flex-1 min-w-[80px]">{fmtDate(record.date_of_payment)}</span></div>
+                </div>
+                <div className="flex flex-col items-center gap-1 flex-1">
+                  {logoUrl ? (
+                    <img src={logoUrl} alt="LGU Logo" className="form-header-logo h-20 w-20 object-contain" />
+                  ) : (
+                    <div className="h-20 w-20 flex items-center justify-center rounded-full border-2 border-black text-[8px] font-bold text-center">LGU</div>
+                  )}
+                  <p className="text-[9px] font-bold">Republic of the Philippines</p>
+                  <p className="text-[9px] font-bold">Province of Surigao del Sur</p>
+                  <p className="text-[9px] font-bold">{municipalityName}</p>
+                </div>
+                <div className="w-48" />
+              </div>
+            </div>
+            <div className="border-t-2 border-b-2 border-black text-center py-1 my-2">
+              <p className="text-[11px] font-bold tracking-wide">APPLICATION FOR LOCATIONAL CLEARANCE / CERTIFICATE OF ZONING COMPLIANCE</p>
+            </div>
+            <div className="grid grid-cols-2 gap-0 text-[9px]">
+              <div className="border border-black p-1"><div className="font-bold mb-0.5">1. Name of Applicant (Last, First, Middle)</div><div className="border-b border-black min-h-[18px]">{record.owner_name}</div></div>
+              <div className="border border-black p-1"><div className="font-bold mb-0.5">2. Name of Corporation</div><div className="border-b border-black min-h-[18px]">{record.corporation_name ?? ""}</div></div>
+              <div className="border border-black p-1"><div className="font-bold mb-0.5">3. Address &amp; Tel. No. of Applicant</div><div className="border-b border-black min-h-[18px]">{record.address}{record.owner_contact ? ` / Tel: ${record.owner_contact}` : ""}</div></div>
+              <div className="border border-black p-1"><div className="font-bold mb-0.5">4. Address of Corporation</div><div className="border-b border-black min-h-[18px]">{record.corporation_address ?? ""}</div></div>
+              <div className="border border-black p-1"><div className="font-bold mb-0.5">5. Name of Authorized Representative</div><div className="border-b border-black min-h-[18px]">{record.authorized_rep_name ?? ""}</div></div>
+              <div className="border border-black p-1"><div className="font-bold mb-0.5">6. Address of Authorized Representative</div><div className="border-b border-black min-h-[18px]">{record.authorized_rep_address ?? ""}</div></div>
+              <div className="border border-black p-1"><div className="font-bold mb-0.5">7. Project Type</div><div className="border-b border-black min-h-[18px]">{record.project_type ?? ""}</div></div>
+              <div className="border border-black p-1"><div className="font-bold mb-0.5">8. Project Nature</div><div className="border-b border-black min-h-[18px]">{record.project_nature ?? ""}</div></div>
+              <div className="border border-black p-1"><div className="font-bold mb-0.5">9. Project Location</div><div className="border-b border-black min-h-[18px]">{record.barangay}{record.address ? `, ${record.address}` : ""}</div></div>
+              <div className="border border-black p-1"><div className="font-bold mb-0.5">10. Project Scope <span className="font-normal">(In Square Meters)</span></div><div className="flex gap-4"><div><span className="font-bold">Lot Area:</span> {record.land_area ? `${fmtNum(record.land_area)} sq.m.` : "_____ sq.m."}</div><div><span className="font-bold">Floor Area:</span> {record.floor_area ? `${fmtNum(record.floor_area)} sq.m.` : "_____ sq.m."}</div></div></div>
+              <div className="border border-black p-1"><div className="font-bold mb-0.5">11. Right Over Land</div><div className="border-b border-black min-h-[18px]">{record.right_over_land ?? ""}</div></div>
+              <div className="border border-black p-1"><div className="font-bold mb-0.5">12. Project Tenure</div><div className="border-b border-black min-h-[18px]">{record.project_tenure ?? ""}</div></div>
+              <div className="border border-black p-1 col-span-2"><div className="font-bold mb-0.5">13. TCT/TDN</div><div className="border-b border-black min-h-[18px]">{record.tct_tdn ?? ""}</div></div>
+              <div className="border border-black p-1 col-span-2"><div className="font-bold mb-0.5">14. Zoning / Land Use</div><div className="border-b border-black min-h-[18px]">{ZONE_LABEL[record.zone_type] ?? record.zone_type.toUpperCase()}</div></div>
+              <div className="border border-black p-1 col-span-2"><div className="font-bold mb-0.5">15. Project Cost / Capitalization (In Peso, write in words and figures)</div><div className="border-b border-black min-h-[18px]">{record.project_cost ? `${record.project_cost.toLocaleString("en-PH", { style: "currency", currency: "PHP" })} — ₱${fmtNum(record.project_cost)}` : ""}</div></div>
+              <div className="border border-black p-1 col-span-2">
+                <div className="font-bold mb-1">18. Preferred mode of release of decision:</div>
+                <div className="flex gap-6">
+                  <label className="flex items-center gap-1"><span className="border border-black w-3 h-3 flex items-center justify-center text-[8px]">{record.release_mode === "pickup" ? "✓" : ""}</span><span>Pick-up</span></label>
+                  <label className="flex items-center gap-1"><span className="border border-black w-3 h-3 flex items-center justify-center text-[8px]">{record.release_mode === "mail" ? "✓" : ""}</span><span>Mail</span></label>
+                </div>
+              </div>
+            </div>
+            <div className="border border-black p-2 mt-1 grid grid-cols-2 gap-4 text-[8px]">
+              <div>
+                <div className="font-bold mb-1">19. Signature Over Printed Name of Applicant</div>
+                <p>I hereby certify to the best of my knowledge, belief &amp; information that these are true &amp; correct statements I made &amp; I declare under the penalties of perjury if ever I made false statements, that this application has been in good faith verified by me.</p>
+                <div className="mt-4 border-t border-black pt-1 text-center">{record.owner_name}<br /><span className="text-[7px]">Applicant</span></div>
+              </div>
+              <div>
+                <div className="font-bold mb-1">19. Signature Over Printed Name of Authorized Representative</div>
+                <p>I hereby certify to the best of my knowledge, belief &amp; information that these are true &amp; correct statements I made &amp; I declare under the penalties of perjury if ever I made false statements, that this application has been in good faith verified by me.</p>
+                <div className="mt-4 border-t border-black pt-1 text-center">{record.authorized_rep_name ?? "___________________________"}<br /><span className="text-[7px]">Representative</span></div>
+              </div>
+            </div>
+            <div className="mt-2 text-[8px] border border-black p-2">
+              <p>REPUBLIC OF THE PHILIPPINES ) S.S.</p>
+              <p>PROVINCE OF SURIGAO DEL SUR )</p>
+              <p>CITY/MUNICIPALITY OF _______________  )</p>
+              <p className="mt-1">SUBSCRIBED AND SWORN TO before me this ______ day of ____________, __________ in the Municipality of ________, Surigao del Sur, affiant exhibited to me his/her Community Tax No. ________________, issued at ________________, on _____________________________.</p>
+              <div className="grid grid-cols-2 mt-2 gap-2">
+                <div><p>Doc. No. ___________</p><p>Page No. ___________</p><p>Book No. ___________</p><p>Series of ___________</p></div>
+                <div className="text-center"><div className="mt-4 border-t border-black pt-1"><p className="font-bold">EnP JUBERT D. TUTOR</p><p>Municipal Planning and Development Coordinator</p></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* FORM 2 — print copy */}
+        <div>
+          <div className="printable-form-sheet bg-white text-black border border-gray-300 p-6 font-serif" style={{ fontFamily: "Times New Roman, serif" }}>
+            <div className="mb-3">
+              <div className="flex justify-between items-start">
+                <div className="w-24" />
+                <div className="flex flex-col items-center gap-1 flex-1">
+                  {logoUrl ? (
+                    <img src={logoUrl} alt="LGU Logo" className="form-header-logo h-20 w-20 object-contain" />
+                  ) : (
+                    <div className="h-20 w-20 flex items-center justify-center rounded-full border-2 border-black text-[8px] font-bold text-center">LGU</div>
+                  )}
+                  <p className="text-[9px]">Republic of the Philippines</p>
+                  <p className="text-[9px]">Province of Surigao del Sur</p>
+                  <p className="text-[11px] font-bold">{municipalityName}</p>
+                  <p className="text-[9px] mt-1">OFFICE OF THE ZONING ADMINISTRATOR</p>
+                </div>
+                <div className="w-24" />
+              </div>
+              <div className="border-t-2 border-b-2 border-black py-1 my-2 text-center">
+                <p className="text-[13px] font-bold tracking-widest">DECISION ON ZONING</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-0 text-[9px] mb-1">
+              <div className="border border-black p-1"><span className="font-bold">Application No:</span> {appNo}</div>
+              <div className="border border-black p-1"><span className="font-bold">Decision No:</span> {decisionNo}</div>
+              <div className="border border-black p-1"><span className="font-bold">Date Received:</span> {fmtDate(record.created_at)}</div>
+              <div className="border border-black p-1"><span className="font-bold">Date of Issued:</span> {fmtDate(record.date_issued)}</div>
+            </div>
+            <div className="grid grid-cols-2 gap-0 text-[9px] mb-1">
+              <div className="border border-black p-1"><div className="font-bold">Applicant</div><div className="border-b border-black min-h-[16px]">{record.owner_name}</div></div>
+              <div className="border border-black p-1"><div className="font-bold">Name of Corporation</div><div className="border-b border-black min-h-[16px]">{record.corporation_name ?? ""}</div></div>
+              <div className="border border-black p-1 col-span-2"><div className="font-bold">Address</div><div className="border-b border-black min-h-[16px]">{record.address}</div></div>
+            </div>
+            <div className="grid grid-cols-2 gap-0 text-[9px] mb-1">
+              <div className="border border-black p-1">
+                <div className="font-bold">Type of Project</div>
+                <div className="border-b border-black min-h-[16px]">{record.project_type ?? ""}</div>
+                <div className="min-h-[16px] mt-1">{record.project_nature ?? ""}</div>
+              </div>
+              <div className="border border-black p-1">
+                <div className="font-bold">Area &amp; Location</div>
+                <div className="border-b border-black min-h-[16px]">{record.land_area ? `${fmtNum(record.land_area)} sq.m.` : ""}</div>
+                <div className="min-h-[16px] mt-1">{record.barangay}{record.address ? `, ${record.address}` : ""}</div>
+              </div>
+              <div className="border border-black p-1">
+                <div className="font-bold">Decision</div>
+                <div className={`text-[12px] font-bold mt-1 ${record.status === "approved" ? "text-green-700" : record.status === "rejected" ? "text-red-700" : "text-yellow-700"}`}>{record.status.replace(/_/g, " ").toUpperCase()}</div>
+              </div>
+              <div className="border border-black p-1"><div className="font-bold">Right Over Land</div><div className="border-b border-black min-h-[16px]">{record.right_over_land ?? ""}</div></div>
+            </div>
+            <div className="border border-black p-2 text-[8px] mb-3">
+              <p className="font-bold mb-1">Conditions:</p>
+              {[
+                "All conditions stipulated herein form part of this decision are subject to monitoring.",
+                "Non-compliance therewith shall be a cause for cancellation or legal action.",
+                "The applicable requirements of government agencies and applicable provisions of existing laws shall be complied with.",
+                "No activity other than that applied for shall be conducted within the project site.",
+                "No major expansion, alteration and/or improvement shall be introduced without prior clearance from this office.",
+                "This decision shall not be construed as a certification of LGU as to ownership by the applicant of the parcel of land subject of this decision.",
+                "Any misinterpretation, false statements or allegations materials to the issuance of this decision shall be sufficient cause of its revocation.",
+                "Provisions as to setbacks, yard requirements, bulk easement, area height and other restrictions shall strictly conform with the requirements of the National Building Code and other related laws.",
+                "This decision shall be considered automatically revoked if the project is not commenced within one (1) year from the date of issue of this decision.",
+                "For other conditions, please see the reverse side.",
+              ].map((c, i) => (
+                <div key={i} className="flex gap-1 mb-0.5">
+                  <span className="border border-black w-3 h-3 flex-shrink-0 flex items-center justify-center text-[7px] mt-0.5">✓</span>
+                  <span>{c}</span>
+                </div>
+              ))}
+            </div>
+            <div className="text-center text-[9px] mb-3">
+              <div className="inline-block text-left">
+                <div className="mt-6 border-t border-black pt-1">
+                  <p className="font-bold">EnP JUBERT D. TUTOR</p>
+                  <p>Municipal Planning &amp; Dev't. Coordinator</p>
+                </div>
+              </div>
+            </div>
+            <div className="border-t-2 border-black pt-2 grid grid-cols-3 gap-2 text-[9px]">
+              <div><span className="font-bold">LC No.:</span> {appNo}</div>
+              <div><span className="font-bold">O.R. No.:</span> {record.or_no ?? "___________"}</div>
+              <div><span className="font-bold">Date Issued:</span> {fmtDate(record.date_issued)}</div>
+              <div><span className="font-bold">Amount Paid:</span> {record.amount_paid ? `₱${fmtNum(record.amount_paid)}` : "₱ ___________"}</div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <style>{`
+        .print-only-forms { display: none; }
+
         @media print {
           @page {
             size: 8.5in 13in;
@@ -424,14 +596,21 @@ export default function ZoningRecordFormView() {
           body * {
             visibility: hidden !important;
           }
-          .printable-form, .printable-form * {
+
+          .print-only-forms {
+            display: block !important;
+            visibility: visible !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+          }
+          .print-only-forms * {
             visibility: visible !important;
           }
-          .printable-form {
-            position: absolute !important;
-            left: 0 !important;
-            top: 0 !important;
-            width: 100% !important;
+
+          .print-form1-break {
+            page-break-after: always !important;
           }
 
           html, body {
@@ -467,7 +646,6 @@ export default function ZoningRecordFormView() {
             display: block !important;
           }
           .no-print { display: none !important; }
-          #form1, #form2 { page-break-after: always; }
         }
       `}</style>
     </div>
