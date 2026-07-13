@@ -119,6 +119,21 @@ export default function ZoningRecordFormView() {
     query: { enabled: !!id, queryKey: getGetZoningRecordQueryKey(id) },
   });
 
+  // Seed projectCost from the database value the first time the record loads,
+  // but only if the user has not already saved a value for this record in localStorage.
+  useEffect(() => {
+    if (record?.project_cost != null && !projectCost) {
+      try {
+        const saved = localStorage.getItem(storageKey);
+        const hasSaved = saved ? !!JSON.parse(saved).projectCost : false;
+        if (!hasSaved) setProjectCost(String(record.project_cost));
+      } catch {
+        setProjectCost(String(record.project_cost));
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [record?.project_cost]);
+
   if (isLoading) {
     return (
       <div className="space-y-4">
