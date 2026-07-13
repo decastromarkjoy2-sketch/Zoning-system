@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRoute, Link } from "wouter";
 import { useAppBranding } from "@/hooks/use-app-branding";
 import { useAppLogo } from "@/hooks/use-app-logo";
@@ -109,6 +109,10 @@ export default function ZoningRecordFormView() {
     } catch { return ""; }
   });
 
+  // Tracks whether the user has manually typed into the Project Cost input
+  // during this component's lifetime. If false, the DB value always wins on load/refetch.
+  const projectCostUserEdited = useRef(false);
+
   useEffect(() => {
     try {
       localStorage.setItem(storageKey, JSON.stringify({ coordinator, checkedConditions, projectCost }));
@@ -119,17 +123,12 @@ export default function ZoningRecordFormView() {
     query: { enabled: !!id, queryKey: getGetZoningRecordQueryKey(id) },
   });
 
-  // Seed projectCost from the database value the first time the record loads,
-  // but only if the user has not already saved a value for this record in localStorage.
+  // Always sync projectCost from the DB value when the record loads or is updated
+  // (e.g. after editing via the record list), unless the user has manually typed
+  // a new value into the input during this session.
   useEffect(() => {
-    if (record?.project_cost != null && !projectCost) {
-      try {
-        const saved = localStorage.getItem(storageKey);
-        const hasSaved = saved ? !!JSON.parse(saved).projectCost : false;
-        if (!hasSaved) setProjectCost(String(record.project_cost));
-      } catch {
-        setProjectCost(String(record.project_cost));
-      }
+    if (record?.project_cost != null && !projectCostUserEdited.current) {
+      setProjectCost(String(record.project_cost));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [record?.project_cost]);
@@ -415,7 +414,10 @@ export default function ZoningRecordFormView() {
                         min="0"
                         step="0.01"
                         value={projectCost}
-                        onChange={(e) => setProjectCost(e.target.value)}
+                        onChange={(e) => {
+                          projectCostUserEdited.current = true;
+                          setProjectCost(e.target.value);
+                        }}
                         placeholder="0.00"
                         className="border-b border-black flex-1 text-[9px] bg-transparent outline-none min-h-[18px] px-1"
                       />
