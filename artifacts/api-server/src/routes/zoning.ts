@@ -50,11 +50,19 @@ function recordToResponse(r: typeof zoningRecordsTable.$inferSelect) {
   };
 }
 
-function generateRef(): string {
-  const now = new Date();
-  const year = now.getFullYear();
-  const rand = Math.floor(Math.random() * 900000) + 100000;
-  return `ZRN-${year}-${rand}`;
+async function generateRef(): Promise<string> {
+  const year = new Date().getFullYear();
+  const prefix = `ZRN-${year}-`;
+  // Only count records that already use the zero-padded 5-digit format (exactly 5 digits).
+  // This deliberately ignores legacy records with old random 6-digit sequences.
+  const result = await db.execute(
+    sql`SELECT COALESCE(MAX(CAST(SPLIT_PART(reference_number, '-', 3) AS INTEGER)), 0) AS max_seq
+        FROM zoning_records
+        WHERE reference_number ~ ${`^ZRN-${year}-[0-9]{5}$`}`
+  );
+  const maxSeq = Number((result.rows[0] as { max_seq: string | number }).max_seq ?? 0);
+  const next = String(maxSeq + 1).padStart(5, "0");
+  return `${prefix}${next}`;
 }
 
 router.get("/zoning-records/map", async (req, res): Promise<void> => {
@@ -157,7 +165,7 @@ router.post("/zoning-records", async (req, res): Promise<void> => {
   const [record] = await db
     .insert(zoningRecordsTable)
     .values({
-      referenceNumber: generateRef(),
+      referenceNumber: await generateRef(),
       ownerName: d.owner_name,
       ownerContact: d.owner_contact ?? null,
       barangay: d.barangay,
