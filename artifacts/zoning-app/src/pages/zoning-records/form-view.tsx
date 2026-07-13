@@ -407,20 +407,10 @@ export default function ZoningRecordFormView() {
                     <div className="font-bold mb-0.5">
                       15. Project Cost / Capitalization
                     </div>
-                    <div className="flex items-center gap-1 mt-0.5">
-                      <span className="font-bold text-[9px]">₱</span>
-                      <input
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        value={projectCost}
-                        onChange={(e) => {
-                          projectCostUserEdited.current = true;
-                          setProjectCost(e.target.value);
-                        }}
-                        placeholder="0.00"
-                        className="border-b border-black flex-1 text-[9px] bg-transparent outline-none min-h-[18px] px-1"
-                      />
+                    <div className="border-b border-black min-h-[18px] text-[9px] px-1 mt-0.5">
+                      {projectCost
+                        ? `₱${Number(projectCost).toLocaleString("en-PH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                        : ""}
                     </div>
                   </div>
 
