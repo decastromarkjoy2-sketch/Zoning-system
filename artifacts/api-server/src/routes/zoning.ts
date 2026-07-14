@@ -36,6 +36,7 @@ function recordToResponse(r: typeof zoningRecordsTable.$inferSelect) {
     authorized_rep_name: r.authorizedRepName ?? null,
     authorized_rep_address: r.authorizedRepAddress ?? null,
     project_type: r.projectType ?? null,
+    project_description: r.projectDescription ?? null,
     project_nature: r.projectNature ?? null,
     floor_area: r.floorArea != null ? Number(r.floorArea) : null,
     right_over_land: r.rightOverLand ?? null,
@@ -182,6 +183,7 @@ router.post("/zoning-records", async (req, res): Promise<void> => {
       authorizedRepName: d.authorized_rep_name ?? null,
       authorizedRepAddress: d.authorized_rep_address ?? null,
       projectType: d.project_type ?? null,
+      projectDescription: d.project_description ?? null,
       projectNature: d.project_nature ?? null,
       floorArea: d.floor_area?.toString() ?? null,
       rightOverLand: d.right_over_land ?? null,
@@ -257,6 +259,7 @@ router.patch("/zoning-records/:id", async (req, res): Promise<void> => {
   if (d.authorized_rep_name !== undefined) updateData.authorizedRepName = d.authorized_rep_name;
   if (d.authorized_rep_address !== undefined) updateData.authorizedRepAddress = d.authorized_rep_address;
   if (d.project_type !== undefined) updateData.projectType = d.project_type;
+  if (d.project_description !== undefined) updateData.projectDescription = d.project_description;
   if (d.project_nature !== undefined) updateData.projectNature = d.project_nature;
   if (d.floor_area !== undefined) updateData.floorArea = d.floor_area?.toString();
   if (d.right_over_land !== undefined) updateData.rightOverLand = d.right_over_land;

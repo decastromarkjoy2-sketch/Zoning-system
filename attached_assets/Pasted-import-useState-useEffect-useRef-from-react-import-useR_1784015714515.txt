@@ -342,10 +342,10 @@ export default function ZoningRecordFormView() {
 
                   {/* Row 4: Project Type + Nature */}
                   <div className="border border-black p-1">
-                    <div className="font-bold mb-0.5">7. Project Type / Project Description</div>
+                    <div className="font-bold mb-0.5">7. Project Type</div>
                     <div className="border-b border-black min-h-[18px] leading-snug">
                       {record.project_type
-                        ? `${record.project_type}${record.project_description ? ` - ${record.project_description}` : ""}`
+                        ? `PROJECT TYPE: ${record.project_type}${record.project_description ? ` - ${record.project_description}` : ""}`
                         : ""}
                     </div>
                   </div>
@@ -821,10 +821,10 @@ export default function ZoningRecordFormView() {
                 </div>
               </div>
               <div className="border border-black p-1">
-                <div className="font-bold mb-0.5">7. Project Type / Project Description</div>
+                <div className="font-bold mb-0.5">7. Project Type</div>
                 <div className="border-b border-black min-h-[18px] leading-snug">
                   {record.project_type
-                    ? `${record.project_type}${record.project_description ? ` - ${record.project_description}` : ""}`
+                    ? `PROJECT TYPE: ${record.project_type}${record.project_description ? ` - ${record.project_description}` : ""}`
                     : ""}
                 </div>
               </div>
