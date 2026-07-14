@@ -52,6 +52,7 @@ export const zoningRecordsTable = pgTable("zoning_records", {
   authorizedRepName: text("authorized_rep_name"),
   authorizedRepAddress: text("authorized_rep_address"),
   projectType: text("project_type"),
+  projectDescription: text("project_description"),
   projectNature: text("project_nature"),
   floorArea: numeric("floor_area", { precision: 12, scale: 2 }),
   rightOverLand: text("right_over_land"),

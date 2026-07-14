@@ -45,6 +45,8 @@ export interface ZoningRecord {
   /** @nullable */
   project_type?: string | null;
   /** @nullable */
+  project_description?: string | null;
+  /** @nullable */
   project_nature?: string | null;
   /** @nullable */
   floor_area?: number | null;

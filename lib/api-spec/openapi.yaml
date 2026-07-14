@@ -857,6 +857,8 @@ components:
           type: ["string", "null"]
         project_type:
           type: ["string", "null"]
+        project_description:
+          type: ["string", "null"]
         project_nature:
           type: ["string", "null"]
         floor_area:
@@ -926,6 +928,8 @@ components:
           type: string
         project_type:
           type: string
+        project_description:
+          type: string
         project_nature:
           type: string
         floor_area:
@@ -984,6 +988,8 @@ components:
         authorized_rep_address:
           type: string
         project_type:
+          type: string
+        project_description:
           type: string
         project_nature:
           type: string

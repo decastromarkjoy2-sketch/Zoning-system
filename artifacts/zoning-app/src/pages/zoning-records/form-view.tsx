@@ -329,8 +329,11 @@ export default function ZoningRecordFormView() {
                   {/* Row 4: Project Type + Nature */}
                   <div className="border border-black p-1">
                     <div className="font-bold mb-0.5">7. Project Type</div>
-                    <div className="border-b border-black min-h-[18px]">
-                      {record.project_type ?? ""}
+                    <div className="flex items-start gap-2 border-b border-black min-h-[18px]">
+                      <span className="shrink-0">{record.project_type ?? ""}</span>
+                      {record.project_description && (
+                        <span className="border-l border-gray-400 pl-2 text-gray-700">{record.project_description}</span>
+                      )}
                     </div>
                   </div>
                   <div className="border border-black p-1">
@@ -808,8 +811,11 @@ export default function ZoningRecordFormView() {
               </div>
               <div className="border border-black p-1">
                 <div className="font-bold mb-0.5">7. Project Type</div>
-                <div className="border-b border-black min-h-[18px]">
-                  {record.project_type ?? ""}
+                <div className="flex items-start gap-2 border-b border-black min-h-[18px]">
+                  <span className="shrink-0">{record.project_type ?? ""}</span>
+                  {record.project_description && (
+                    <span className="border-l border-gray-400 pl-2 text-gray-700">{record.project_description}</span>
+                  )}
                 </div>
               </div>
               <div className="border border-black p-1">

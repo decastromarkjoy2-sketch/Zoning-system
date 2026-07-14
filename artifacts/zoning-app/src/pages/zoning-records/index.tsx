@@ -222,6 +222,7 @@ export default function ZoningRecords() {
         authorized_rep_name: get("authorized_rep_name"),
         authorized_rep_address: get("authorized_rep_address"),
         project_type: editProjectType,
+        project_description: get("project_description"),
         project_nature: editProjectNature,
         right_over_land: editRightOverLand,
         project_tenure: editProjectTenure,
@@ -263,6 +264,7 @@ export default function ZoningRecords() {
         authorized_rep_name: get("authorized_rep_name"),
         authorized_rep_address: get("authorized_rep_address"),
         project_type: projectTypeValue,
+        project_description: get("project_description"),
         project_nature: projectNatureValue || get("project_nature"),
         right_over_land: rightOverLandValue,
         project_tenure: projectTenureValue,
@@ -415,6 +417,10 @@ export default function ZoningRecords() {
                       <SelectItem value="SPECIAL PROJECT">SPECIAL PROJECT</SelectItem>
                     </SelectContent>
                   </Select>
+                </div>
+                <div className="space-y-1.5 col-span-2">
+                  <Label htmlFor="project_description">Project Description</Label>
+                  <Textarea id="project_description" name="project_description" rows={2} placeholder="Brief description of the proposed project..." />
                 </div>
                 <div className="space-y-1.5">
                   <Label>Project Nature</Label>
@@ -737,6 +743,10 @@ export default function ZoningRecords() {
                       <SelectItem value="SPECIAL PROJECT">SPECIAL PROJECT</SelectItem>
                     </SelectContent>
                   </Select>
+                </div>
+                <div className="space-y-1.5 col-span-2">
+                  <Label htmlFor="edit_project_description">Project Description</Label>
+                  <Textarea id="edit_project_description" name="project_description" rows={2} defaultValue={editRecord.project_description ?? ""} placeholder="Brief description of the proposed project..." />
                 </div>
                 <div className="space-y-1.5">
                   <Label>Project Nature</Label>

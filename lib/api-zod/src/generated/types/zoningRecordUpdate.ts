@@ -26,6 +26,7 @@ export interface ZoningRecordUpdate {
   authorized_rep_name?: string;
   authorized_rep_address?: string;
   project_type?: string;
+  project_description?: string;
   project_nature?: string;
   floor_area?: number;
   right_over_land?: string;
