@@ -17,4 +17,10 @@ export const ZoningRecordUpdateZoneType = {
   institutional: 'institutional',
   protected_area: 'protected_area',
   mixed_use: 'mixed_use',
+  forest: 'forest',
+  parks_recreational: 'parks_recreational',
+  open_space: 'open_space',
+  aquacultural: 'aquacultural',
+  cemetery: 'cemetery',
+  special_use: 'special_use',
 } as const;

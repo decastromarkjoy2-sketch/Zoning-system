@@ -218,7 +218,7 @@ export const ListZoningRecordsResponse = zod.object({
   "owner_contact": zod.string().nullish(),
   "barangay": zod.string(),
   "address": zod.string(),
-  "zone_type": zod.enum(['residential', 'commercial', 'industrial', 'agricultural', 'institutional', 'protected_area', 'mixed_use']),
+  "zone_type": zod.enum(['residential', 'commercial', 'industrial', 'agricultural', 'institutional', 'protected_area', 'mixed_use', 'forest', 'parks_recreational', 'open_space', 'aquacultural', 'cemetery', 'special_use']),
   "status": zod.enum(['pending', 'under_review', 'approved', 'rejected']),
   "land_area": zod.number().nullish(),
   "gps_lat": zod.number().nullish(),
@@ -259,7 +259,7 @@ export const CreateZoningRecordBody = zod.object({
   "owner_contact": zod.string().optional(),
   "barangay": zod.string(),
   "address": zod.string(),
-  "zone_type": zod.enum(['residential', 'commercial', 'industrial', 'agricultural', 'institutional', 'protected_area', 'mixed_use']),
+  "zone_type": zod.enum(['residential', 'commercial', 'industrial', 'agricultural', 'institutional', 'protected_area', 'mixed_use', 'forest', 'parks_recreational', 'open_space', 'aquacultural', 'cemetery', 'special_use']),
   "land_area": zod.number().optional(),
   "gps_lat": zod.number().optional(),
   "gps_lng": zod.number().optional(),
@@ -297,7 +297,7 @@ export const GetZoningRecordResponse = zod.object({
   "owner_contact": zod.string().nullish(),
   "barangay": zod.string(),
   "address": zod.string(),
-  "zone_type": zod.enum(['residential', 'commercial', 'industrial', 'agricultural', 'institutional', 'protected_area', 'mixed_use']),
+  "zone_type": zod.enum(['residential', 'commercial', 'industrial', 'agricultural', 'institutional', 'protected_area', 'mixed_use', 'forest', 'parks_recreational', 'open_space', 'aquacultural', 'cemetery', 'special_use']),
   "status": zod.enum(['pending', 'under_review', 'approved', 'rejected']),
   "land_area": zod.number().nullish(),
   "gps_lat": zod.number().nullish(),
@@ -338,7 +338,7 @@ export const UpdateZoningRecordBody = zod.object({
   "owner_contact": zod.string().optional(),
   "barangay": zod.string().optional(),
   "address": zod.string().optional(),
-  "zone_type": zod.enum(['residential', 'commercial', 'industrial', 'agricultural', 'institutional', 'protected_area', 'mixed_use']).optional(),
+  "zone_type": zod.enum(['residential', 'commercial', 'industrial', 'agricultural', 'institutional', 'protected_area', 'mixed_use', 'forest', 'parks_recreational', 'open_space', 'aquacultural', 'cemetery', 'special_use']).optional(),
   "status": zod.enum(['pending', 'under_review', 'approved', 'rejected']).optional(),
   "land_area": zod.number().optional(),
   "gps_lat": zod.number().optional(),
@@ -369,7 +369,7 @@ export const UpdateZoningRecordResponse = zod.object({
   "owner_contact": zod.string().nullish(),
   "barangay": zod.string(),
   "address": zod.string(),
-  "zone_type": zod.enum(['residential', 'commercial', 'industrial', 'agricultural', 'institutional', 'protected_area', 'mixed_use']),
+  "zone_type": zod.enum(['residential', 'commercial', 'industrial', 'agricultural', 'institutional', 'protected_area', 'mixed_use', 'forest', 'parks_recreational', 'open_space', 'aquacultural', 'cemetery', 'special_use']),
   "status": zod.enum(['pending', 'under_review', 'approved', 'rejected']),
   "land_area": zod.number().nullish(),
   "gps_lat": zod.number().nullish(),
@@ -450,7 +450,7 @@ export const ListZoningBoundariesResponse = zod.array(ListZoningBoundariesRespon
  */
 export const CreateZoningBoundaryBody = zod.object({
   "name": zod.string(),
-  "zone_type": zod.enum(['residential', 'commercial', 'industrial', 'agricultural', 'institutional', 'protected_area', 'mixed_use']),
+  "zone_type": zod.enum(['residential', 'commercial', 'industrial', 'agricultural', 'institutional', 'protected_area', 'mixed_use', 'forest', 'parks_recreational', 'open_space', 'aquacultural', 'cemetery', 'special_use']),
   "geojson": zod.object({
 
 }).passthrough(),

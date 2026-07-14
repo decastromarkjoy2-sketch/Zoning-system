@@ -827,7 +827,7 @@ components:
           type: string
         zone_type:
           type: string
-          enum: [residential, commercial, industrial, agricultural, institutional, protected_area, mixed_use]
+          enum: [residential, commercial, industrial, agricultural, institutional, protected_area, mixed_use, forest, parks_recreational, open_space, aquacultural, cemetery, special_use]
         status:
           type: string
           enum: [pending, under_review, approved, rejected]
@@ -903,7 +903,7 @@ components:
           type: string
         zone_type:
           type: string
-          enum: [residential, commercial, industrial, agricultural, institutional, protected_area, mixed_use]
+          enum: [residential, commercial, industrial, agricultural, institutional, protected_area, mixed_use, forest, parks_recreational, open_space, aquacultural, cemetery, special_use]
         land_area:
           type: number
         gps_lat:
@@ -959,7 +959,7 @@ components:
           type: string
         zone_type:
           type: string
-          enum: [residential, commercial, industrial, agricultural, institutional, protected_area, mixed_use]
+          enum: [residential, commercial, industrial, agricultural, institutional, protected_area, mixed_use, forest, parks_recreational, open_space, aquacultural, cemetery, special_use]
         status:
           type: string
           enum: [pending, under_review, approved, rejected]
@@ -1066,7 +1066,7 @@ components:
           type: string
         zone_type:
           type: string
-          enum: [residential, commercial, industrial, agricultural, institutional, protected_area, mixed_use]
+          enum: [residential, commercial, industrial, agricultural, institutional, protected_area, mixed_use, forest, parks_recreational, open_space, aquacultural, cemetery, special_use]
         geojson:
           type: object
         color:

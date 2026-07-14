@@ -22,6 +22,9 @@ const ZONE_LABEL: Record<string, string> = {
   forest: "FOREST ZONE",
   parks_recreational: "PARKS AND RECREATIONAL ZONE",
   open_space: "OPEN SPACE ZONE (VACANT)",
+  aquacultural: "AQUACULTURAL ZONE",
+  cemetery: "CEMETERY ZONE",
+  special_use: "SPECIAL USE ZONE",
 };
 
 const DEFAULT_CONDITIONS = [

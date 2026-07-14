@@ -118,6 +118,12 @@ export const ZoningRecordZoneType = {
   institutional: 'institutional',
   protected_area: 'protected_area',
   mixed_use: 'mixed_use',
+  forest: 'forest',
+  parks_recreational: 'parks_recreational',
+  open_space: 'open_space',
+  aquacultural: 'aquacultural',
+  cemetery: 'cemetery',
+  special_use: 'special_use',
 } as const;
 
 export type ZoningRecordStatus = typeof ZoningRecordStatus[keyof typeof ZoningRecordStatus];
@@ -199,6 +205,12 @@ export const ZoningRecordInputZoneType = {
   institutional: 'institutional',
   protected_area: 'protected_area',
   mixed_use: 'mixed_use',
+  forest: 'forest',
+  parks_recreational: 'parks_recreational',
+  open_space: 'open_space',
+  aquacultural: 'aquacultural',
+  cemetery: 'cemetery',
+  special_use: 'special_use',
 } as const;
 
 export interface ZoningRecordInput {
@@ -240,6 +252,12 @@ export const ZoningRecordUpdateZoneType = {
   institutional: 'institutional',
   protected_area: 'protected_area',
   mixed_use: 'mixed_use',
+  forest: 'forest',
+  parks_recreational: 'parks_recreational',
+  open_space: 'open_space',
+  aquacultural: 'aquacultural',
+  cemetery: 'cemetery',
+  special_use: 'special_use',
 } as const;
 
 export type ZoningRecordUpdateStatus = typeof ZoningRecordUpdateStatus[keyof typeof ZoningRecordUpdateStatus];
@@ -324,6 +342,12 @@ export const ZoningBoundaryInputZoneType = {
   institutional: 'institutional',
   protected_area: 'protected_area',
   mixed_use: 'mixed_use',
+  forest: 'forest',
+  parks_recreational: 'parks_recreational',
+  open_space: 'open_space',
+  aquacultural: 'aquacultural',
+  cemetery: 'cemetery',
+  special_use: 'special_use',
 } as const;
 
 export type ZoningBoundaryInputGeojson = { [key: string]: unknown };

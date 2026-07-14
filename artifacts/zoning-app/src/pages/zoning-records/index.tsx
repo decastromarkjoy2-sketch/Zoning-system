@@ -444,6 +444,9 @@ export default function ZoningRecords() {
                       <SelectItem value="forest">FOREST ZONE</SelectItem>
                       <SelectItem value="parks_recreational">PARKS AND RECREATIONAL ZONE</SelectItem>
                       <SelectItem value="open_space">OPEN SPACE ZONE (VACANT)</SelectItem>
+                      <SelectItem value="aquacultural">AQUACULTURAL ZONE</SelectItem>
+                      <SelectItem value="cemetery">CEMETERY ZONE</SelectItem>
+                      <SelectItem value="special_use">SPECIAL USE ZONE</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -760,6 +763,9 @@ export default function ZoningRecords() {
                       <SelectItem value="forest">FOREST ZONE</SelectItem>
                       <SelectItem value="parks_recreational">PARKS AND RECREATIONAL ZONE</SelectItem>
                       <SelectItem value="open_space">OPEN SPACE ZONE (VACANT)</SelectItem>
+                      <SelectItem value="aquacultural">AQUACULTURAL ZONE</SelectItem>
+                      <SelectItem value="cemetery">CEMETERY ZONE</SelectItem>
+                      <SelectItem value="special_use">SPECIAL USE ZONE</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
