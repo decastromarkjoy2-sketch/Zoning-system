@@ -67,14 +67,24 @@ import {
 import { Separator } from "@/components/ui/separator";
 
 const ZONE_COLORS: Record<string, string> = {
-  residential: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300",
-  commercial: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
-  industrial: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300",
-  agricultural: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300",
-  institutional: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300",
-  protected_area: "bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-300",
-  mixed_use: "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300",
+  residential:        "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300",
+  commercial:         "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
+  industrial:         "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300",
+  agricultural:       "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300",
+  institutional:      "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300",
+  protected_area:     "bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-300",
+  mixed_use:          "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300",
+  forest:             "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300",
+  parks_recreational: "bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300",
+  open_space:         "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300",
+  aquacultural:       "bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300",
+  cemetery:           "bg-stone-100 text-stone-600 dark:bg-stone-800 dark:text-stone-300",
+  special_use:        "bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300",
 };
+
+const ZONE_LABEL_MAP: Record<string, string> = Object.fromEntries(
+  ZONE_TYPES.map(({ value, label }) => [value, label])
+);
 
 const STATUS_VARIANTS: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
   approved: "default",
@@ -85,8 +95,8 @@ const STATUS_VARIANTS: Record<string, "default" | "secondary" | "destructive" | 
 
 function ZoneChip({ type }: { type: string }) {
   return (
-    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${ZONE_COLORS[type] ?? ""}`}>
-      {type.replace(/_/g, " ")}
+    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${ZONE_COLORS[type] ?? "bg-muted text-muted-foreground"}`}>
+      {ZONE_LABEL_MAP[type] ?? type.replace(/_/g, " ").toUpperCase()}
     </span>
   );
 }
