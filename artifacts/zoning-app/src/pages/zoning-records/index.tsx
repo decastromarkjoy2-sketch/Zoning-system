@@ -112,7 +112,7 @@ export default function ZoningRecords() {
   const [zoneTypeValue, setZoneTypeValue] = useState("residential");
   const [projectTypeValue, setProjectTypeValue] = useState("RESIDENTIAL");
   const [projectNatureValue, setProjectNatureValue] = useState("NEW DEVELOPMENT");
-  const [rightOverLandValue, setRightOverLandValue] = useState("PERMANENT");
+  const [rightOverLandValue, setRightOverLandValue] = useState("OWNER");
   const [projectTenureValue, setProjectTenureValue] = useState("PERMANENT");
   const [releaseModeValue, setReleaseModeValue] = useState("pickup");
 
@@ -476,8 +476,13 @@ export default function ZoningRecords() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="PERMANENT">PERMANENT</SelectItem>
-                      <SelectItem value="TEMPORARY">TEMPORARY</SelectItem>
+                      <SelectItem value="OWNER">OWNER</SelectItem>
+                      <SelectItem value="LESSEE">LESSEE</SelectItem>
+                      <SelectItem value="HEIRS">HEIRS</SelectItem>
+                      <SelectItem value="OCCUPANTS">OCCUPANTS</SelectItem>
+                      <SelectItem value="WITH CONSENT">WITH CONSENT</SelectItem>
+                      <SelectItem value="GOVERNMENT PROPERTY">GOVERNMENT PROPERTY</SelectItem>
+                      <SelectItem value="OTHERS">OTHERS</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -792,8 +797,13 @@ export default function ZoningRecords() {
                   <Select value={editRightOverLand} onValueChange={setEditRightOverLand}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="PERMANENT">PERMANENT</SelectItem>
-                      <SelectItem value="TEMPORARY">TEMPORARY</SelectItem>
+                      <SelectItem value="OWNER">OWNER</SelectItem>
+                      <SelectItem value="LESSEE">LESSEE</SelectItem>
+                      <SelectItem value="HEIRS">HEIRS</SelectItem>
+                      <SelectItem value="OCCUPANTS">OCCUPANTS</SelectItem>
+                      <SelectItem value="WITH CONSENT">WITH CONSENT</SelectItem>
+                      <SelectItem value="GOVERNMENT PROPERTY">GOVERNMENT PROPERTY</SelectItem>
+                      <SelectItem value="OTHERS">OTHERS</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
