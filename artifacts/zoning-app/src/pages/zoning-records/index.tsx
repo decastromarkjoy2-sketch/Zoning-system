@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { ZONE_TYPES } from "@/constants/zones";
 import { useAuth } from "@/contexts/auth-context";
@@ -110,6 +110,21 @@ function SectionHeader({ label }: { label: string }) {
   );
 }
 
+const DRAFT_KEY = "zoning-new-record-draft";
+
+const BLANK_DRAFT = {
+  or_no: "", date_of_payment: "", amount_paid: "",
+  owner_name: "", owner_contact: "", address: "",
+  corporation_name: "", corporation_address: "",
+  authorized_rep_name: "", authorized_rep_address: "",
+  project_description: "",
+  barangay: "", land_area: "", floor_area: "",
+  gps_lat: "", gps_lng: "",
+  tct_tdn: "", project_cost: "",
+  date_issued: "", notes: "",
+};
+type NewRecordDraft = typeof BLANK_DRAFT;
+
 export default function ZoningRecords() {
   const queryClient = useQueryClient();
   const { canEdit } = useAuth();
@@ -126,6 +141,51 @@ export default function ZoningRecords() {
   const [rightOverLandValue, setRightOverLandValue] = useState("OWNER");
   const [projectTenureValue, setProjectTenureValue] = useState("PERMANENT");
   const [releaseModeValue, setReleaseModeValue] = useState("pickup");
+
+  const [draft, setDraft] = useState<NewRecordDraft>(BLANK_DRAFT);
+
+  function setDraftField(field: keyof NewRecordDraft, value: string) {
+    setDraft((prev) => ({ ...prev, [field]: value }));
+  }
+
+  // Load draft from localStorage whenever the create dialog opens
+  useEffect(() => {
+    if (!createOpen) return;
+    try {
+      const saved = localStorage.getItem(DRAFT_KEY);
+      if (saved) {
+        const { fields, selects, advanced } = JSON.parse(saved);
+        if (fields) setDraft({ ...BLANK_DRAFT, ...fields });
+        if (selects?.zoneType) setZoneTypeValue(selects.zoneType);
+        if (selects?.projectType) setProjectTypeValue(selects.projectType);
+        if (selects?.projectNature) setProjectNatureValue(selects.projectNature);
+        if (selects?.rightOverLand) setRightOverLandValue(selects.rightOverLand);
+        if (selects?.projectTenure) setProjectTenureValue(selects.projectTenure);
+        if (selects?.releaseMode) setReleaseModeValue(selects.releaseMode);
+        if (advanced !== undefined) setShowAdvanced(advanced);
+      }
+    } catch {}
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [createOpen]);
+
+  // Save draft to localStorage on every change (only while dialog is open)
+  useEffect(() => {
+    if (!createOpen) return;
+    try {
+      localStorage.setItem(DRAFT_KEY, JSON.stringify({
+        fields: draft,
+        selects: {
+          zoneType: zoneTypeValue,
+          projectType: projectTypeValue,
+          projectNature: projectNatureValue,
+          rightOverLand: rightOverLandValue,
+          projectTenure: projectTenureValue,
+          releaseMode: releaseModeValue,
+        },
+        advanced: showAdvanced,
+      }));
+    } catch {}
+  }, [createOpen, draft, zoneTypeValue, projectTypeValue, projectNatureValue, rightOverLandValue, projectTenureValue, releaseModeValue, showAdvanced]);
 
   const [editOpen, setEditOpen] = useState(false);
   const [editRecord, setEditRecord] = useState<ZoningRecord | null>(null);
@@ -159,10 +219,13 @@ export default function ZoningRecords() {
     mutation: {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: getListZoningRecordsQueryKey() });
+        localStorage.removeItem(DRAFT_KEY);
+        setDraft(BLANK_DRAFT);
         setCreateOpen(false);
         setZoneTypeValue("residential");
+        setProjectTypeValue("RESIDENTIAL");
         setProjectNatureValue("NEW DEVELOPMENT");
-        setRightOverLandValue("OWNED");
+        setRightOverLandValue("OWNER");
         setProjectTenureValue("PERMANENT");
         setReleaseModeValue("pickup");
         setShowAdvanced(false);
@@ -338,30 +401,30 @@ export default function ZoningRecords() {
                 <SectionHeader label="Payment Details" />
                 <div className="space-y-1.5">
                   <Label htmlFor="or_no">O.R. No.</Label>
-                  <Input id="or_no" name="or_no" placeholder="Official Receipt number" />
+                  <Input id="or_no" name="or_no" placeholder="Official Receipt number" value={draft.or_no} onChange={e => setDraftField("or_no", e.target.value)} />
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="date_of_payment">Date of Payment</Label>
-                  <Input id="date_of_payment" name="date_of_payment" type="date" />
+                  <Input id="date_of_payment" name="date_of_payment" type="date" value={draft.date_of_payment} onChange={e => setDraftField("date_of_payment", e.target.value)} />
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="amount_paid">Amount Paid (₱)</Label>
-                  <Input id="amount_paid" name="amount_paid" type="number" step="0.01" placeholder="0.00" />
+                  <Input id="amount_paid" name="amount_paid" type="number" step="0.01" placeholder="0.00" value={draft.amount_paid} onChange={e => setDraftField("amount_paid", e.target.value)} />
                 </div>
 
                 {/* ── Applicant Information ── */}
                 <SectionHeader label="Applicant Information" />
                 <div className="space-y-1.5">
                   <Label htmlFor="owner_name">Name of Applicant (Last, First, Middle) *</Label>
-                  <Input id="owner_name" name="owner_name" required placeholder="e.g. Dela Cruz, Juan A." />
+                  <Input id="owner_name" name="owner_name" required placeholder="e.g. Dela Cruz, Juan A." value={draft.owner_name} onChange={e => setDraftField("owner_name", e.target.value)} />
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="owner_contact">Tel. / Contact No.</Label>
-                  <Input id="owner_contact" name="owner_contact" placeholder="+63 9xx xxx xxxx" />
+                  <Input id="owner_contact" name="owner_contact" placeholder="+63 9xx xxx xxxx" value={draft.owner_contact} onChange={e => setDraftField("owner_contact", e.target.value)} />
                 </div>
                 <div className="col-span-2 space-y-1.5">
                   <Label htmlFor="address">Address of Applicant *</Label>
-                  <Input id="address" name="address" required placeholder="Purok, Barangay, Municipality" />
+                  <Input id="address" name="address" required placeholder="Purok, Barangay, Municipality" value={draft.address} onChange={e => setDraftField("address", e.target.value)} />
                 </div>
 
                 {/* ── Corporation / Representative ── */}
@@ -381,21 +444,21 @@ export default function ZoningRecords() {
                     <SectionHeader label="Corporation (if applicable)" />
                     <div className="space-y-1.5">
                       <Label htmlFor="corporation_name">Name of Corporation</Label>
-                      <Input id="corporation_name" name="corporation_name" />
+                      <Input id="corporation_name" name="corporation_name" value={draft.corporation_name} onChange={e => setDraftField("corporation_name", e.target.value)} />
                     </div>
                     <div className="space-y-1.5">
                       <Label htmlFor="corporation_address">Address of Corporation</Label>
-                      <Input id="corporation_address" name="corporation_address" />
+                      <Input id="corporation_address" name="corporation_address" value={draft.corporation_address} onChange={e => setDraftField("corporation_address", e.target.value)} />
                     </div>
 
                     <SectionHeader label="Authorized Representative" />
                     <div className="space-y-1.5">
                       <Label htmlFor="authorized_rep_name">Name of Authorized Representative</Label>
-                      <Input id="authorized_rep_name" name="authorized_rep_name" />
+                      <Input id="authorized_rep_name" name="authorized_rep_name" value={draft.authorized_rep_name} onChange={e => setDraftField("authorized_rep_name", e.target.value)} />
                     </div>
                     <div className="space-y-1.5">
                       <Label htmlFor="authorized_rep_address">Address of Authorized Representative</Label>
-                      <Input id="authorized_rep_address" name="authorized_rep_address" />
+                      <Input id="authorized_rep_address" name="authorized_rep_address" value={draft.authorized_rep_address} onChange={e => setDraftField("authorized_rep_address", e.target.value)} />
                     </div>
                   </>
                 )}
@@ -420,7 +483,7 @@ export default function ZoningRecords() {
                 </div>
                 <div className="space-y-1.5 col-span-2">
                   <Label htmlFor="project_description">Project Description</Label>
-                  <Textarea id="project_description" name="project_description" rows={2} placeholder="Brief description of the proposed project..." />
+                  <Textarea id="project_description" name="project_description" rows={2} placeholder="Brief description of the proposed project..." value={draft.project_description} onChange={e => setDraftField("project_description", e.target.value)} />
                 </div>
                 <div className="space-y-1.5">
                   <Label>Project Nature</Label>
@@ -441,7 +504,7 @@ export default function ZoningRecords() {
                 <SectionHeader label="Project Location &amp; Scope" />
                 <div className="space-y-1.5">
                   <Label htmlFor="barangay">Barangay *</Label>
-                  <Input id="barangay" name="barangay" required placeholder="e.g. Poblacion" />
+                  <Input id="barangay" name="barangay" required placeholder="e.g. Poblacion" value={draft.barangay} onChange={e => setDraftField("barangay", e.target.value)} />
                 </div>
                 <div className="space-y-1.5">
                   <Label>Zone / Land Use *</Label>
@@ -458,19 +521,19 @@ export default function ZoningRecords() {
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="land_area">Lot Area (sqm)</Label>
-                  <Input id="land_area" name="land_area" type="number" step="0.01" placeholder="0.00" />
+                  <Input id="land_area" name="land_area" type="number" step="0.01" placeholder="0.00" value={draft.land_area} onChange={e => setDraftField("land_area", e.target.value)} />
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="floor_area">Floor Area (sqm)</Label>
-                  <Input id="floor_area" name="floor_area" type="number" step="0.01" placeholder="0.00" />
+                  <Input id="floor_area" name="floor_area" type="number" step="0.01" placeholder="0.00" value={draft.floor_area} onChange={e => setDraftField("floor_area", e.target.value)} />
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="gps_lat">GPS Latitude</Label>
-                  <Input id="gps_lat" name="gps_lat" type="number" step="0.0000001" placeholder="9.6312" />
+                  <Input id="gps_lat" name="gps_lat" type="number" step="0.0000001" placeholder="9.6312" value={draft.gps_lat} onChange={e => setDraftField("gps_lat", e.target.value)} />
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="gps_lng">GPS Longitude</Label>
-                  <Input id="gps_lng" name="gps_lng" type="number" step="0.0000001" placeholder="126.1978" />
+                  <Input id="gps_lng" name="gps_lng" type="number" step="0.0000001" placeholder="126.1978" value={draft.gps_lng} onChange={e => setDraftField("gps_lng", e.target.value)} />
                 </div>
 
                 {/* ── Land & Tenure ── */}
@@ -506,11 +569,11 @@ export default function ZoningRecords() {
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="tct_tdn">TCT / TDN No.</Label>
-                  <Input id="tct_tdn" name="tct_tdn" placeholder="TCT-XXXXXXX or TDN-XXXXXXX" />
+                  <Input id="tct_tdn" name="tct_tdn" placeholder="TCT-XXXXXXX or TDN-XXXXXXX" value={draft.tct_tdn} onChange={e => setDraftField("tct_tdn", e.target.value)} />
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="project_cost">Project Cost (₱)</Label>
-                  <Input id="project_cost" name="project_cost" type="number" step="0.01" placeholder="0.00" />
+                  <Input id="project_cost" name="project_cost" type="number" step="0.01" placeholder="0.00" value={draft.project_cost} onChange={e => setDraftField("project_cost", e.target.value)} />
                 </div>
 
                 {/* ── Release & Decision ── */}
@@ -529,12 +592,12 @@ export default function ZoningRecords() {
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="date_issued">Date Issued</Label>
-                  <Input id="date_issued" name="date_issued" type="date" />
+                  <Input id="date_issued" name="date_issued" type="date" value={draft.date_issued} onChange={e => setDraftField("date_issued", e.target.value)} />
                 </div>
 
                 <div className="col-span-2 space-y-1.5">
                   <Label htmlFor="notes">Notes / Remarks</Label>
-                  <Textarea id="notes" name="notes" rows={2} placeholder="Additional notes..." />
+                  <Textarea id="notes" name="notes" rows={2} placeholder="Additional notes..." value={draft.notes} onChange={e => setDraftField("notes", e.target.value)} />
                 </div>
               </div>
 
