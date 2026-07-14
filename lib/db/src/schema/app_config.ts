@@ -7,6 +7,7 @@ export const appConfigTable = pgTable("app_config", {
   appName: text("app_name").notNull().default("Municipal Zoning Information System"),
   divisionName: text("division_name").notNull().default("LGU Planning Division"),
   municipalityName: text("municipality_name").notNull().default("Municipality of Tago"),
+  regulatoryReference: text("regulatory_reference").notNull().default("Annex A HLURB Memo. Cr. No. 003 Series of 1985"),
   updatedAt: timestamp("updated_at", { withTimezone: true })
     .notNull()
     .defaultNow()

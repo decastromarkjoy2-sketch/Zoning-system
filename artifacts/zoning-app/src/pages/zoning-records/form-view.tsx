@@ -84,7 +84,7 @@ function FormDivider({ label }: { label: string }) {
 export default function ZoningRecordFormView() {
   const [, params] = useRoute("/zoning-records/:id/form");
   const id = Number(params?.id);
-  const { municipalityName } = useAppBranding();
+  const { municipalityName, regulatoryReference } = useAppBranding();
   const { logoUrl } = useAppLogo();
   const storageKey = `zoning-form-${id}`;
 
@@ -204,7 +204,7 @@ export default function ZoningRecordFormView() {
                 {/* Header */}
                 <div className="mb-2">
                   <p className="text-center text-[9px]">
-                    Annex A HLURB Memo. Cr. No. 003 Series of 1985
+                    {regulatoryReference}
                   </p>
                   <div className="flex justify-between items-start mt-2">
                     {/* Left: application meta */}
@@ -698,7 +698,7 @@ export default function ZoningRecordFormView() {
           >
             <div className="mb-2">
               <p className="text-center text-[9px]">
-                Annex A HLURB Memo. Cr. No. 003 Series of 1985
+                {regulatoryReference}
               </p>
               <div className="flex justify-between items-start mt-2">
                 <div className="text-left text-[9px] space-y-0.5 w-48">

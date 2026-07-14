@@ -12,9 +12,18 @@ async function getOrCreateConfig() {
   return created;
 }
 
+function toResponse(config: typeof appConfigTable.$inferSelect) {
+  return {
+    app_name: config.appName,
+    division_name: config.divisionName,
+    municipality_name: config.municipalityName,
+    regulatory_reference: config.regulatoryReference,
+  };
+}
+
 router.get("/app-config", async (req, res): Promise<void> => {
   const config = await getOrCreateConfig();
-  res.json({ app_name: config.appName, division_name: config.divisionName, municipality_name: config.municipalityName });
+  res.json(toResponse(config));
 });
 
 router.patch("/app-config", async (req, res): Promise<void> => {
@@ -30,14 +39,25 @@ router.patch("/app-config", async (req, res): Promise<void> => {
     return;
   }
 
-  const { app_name, division_name, municipality_name } = req.body as { app_name?: string; division_name?: string; municipality_name?: string };
+  const { app_name, division_name, municipality_name, regulatory_reference } = req.body as {
+    app_name?: string;
+    division_name?: string;
+    municipality_name?: string;
+    regulatory_reference?: string;
+  };
 
   const config = await getOrCreateConfig();
 
-  const updates: { appName?: string; divisionName?: string; municipalityName?: string } = {};
+  const updates: {
+    appName?: string;
+    divisionName?: string;
+    municipalityName?: string;
+    regulatoryReference?: string;
+  } = {};
   if (typeof app_name === "string") updates.appName = app_name.trim() || "Municipal Zoning Information System";
   if (typeof division_name === "string") updates.divisionName = division_name.trim() || "LGU Planning Division";
   if (typeof municipality_name === "string") updates.municipalityName = municipality_name.trim() || "Municipality of Tago";
+  if (typeof regulatory_reference === "string") updates.regulatoryReference = regulatory_reference.trim() || "Annex A HLURB Memo. Cr. No. 003 Series of 1985";
 
   const [updated] = await db
     .update(appConfigTable)
@@ -45,7 +65,7 @@ router.patch("/app-config", async (req, res): Promise<void> => {
     .where(eq(appConfigTable.id, config.id))
     .returning();
 
-  res.json({ app_name: updated.appName, division_name: updated.divisionName, municipality_name: updated.municipalityName });
+  res.json(toResponse(updated));
 });
 
 export default router;

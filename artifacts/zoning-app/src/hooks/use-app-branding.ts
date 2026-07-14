@@ -6,12 +6,14 @@ const DEFAULTS = {
   appName: "Municipal Zoning Information System",
   divisionName: "LGU Planning Division",
   municipalityName: "Municipality of Tago",
+  regulatoryReference: "Annex A HLURB Memo. Cr. No. 003 Series of 1985",
 };
 
 interface Branding {
   appName: string;
   divisionName: string;
   municipalityName: string;
+  regulatoryReference: string;
 }
 
 function readCache(): Branding {
@@ -41,7 +43,12 @@ export function useAppBranding() {
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         if (data?.app_name !== undefined) {
-          const b: Branding = { appName: data.app_name, divisionName: data.division_name, municipalityName: data.municipality_name ?? DEFAULTS.municipalityName };
+          const b: Branding = {
+            appName: data.app_name,
+            divisionName: data.division_name,
+            municipalityName: data.municipality_name ?? DEFAULTS.municipalityName,
+            regulatoryReference: data.regulatory_reference ?? DEFAULTS.regulatoryReference,
+          };
           setBranding(b);
           writeCache(b);
         }
@@ -63,19 +70,34 @@ export function useAppBranding() {
     return () => window.removeEventListener("storage", onStorage);
   }, []);
 
-  async function saveBranding(appName: string, divisionName: string, municipalityName: string): Promise<void> {
+  async function saveBranding(
+    appName: string,
+    divisionName: string,
+    municipalityName: string,
+    regulatoryReference: string,
+  ): Promise<void> {
     const res = await fetch("/api/app-config", {
       method: "PATCH",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ app_name: appName, division_name: divisionName, municipality_name: municipalityName }),
+      body: JSON.stringify({
+        app_name: appName,
+        division_name: divisionName,
+        municipality_name: municipalityName,
+        regulatory_reference: regulatoryReference,
+      }),
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
       throw new Error((err as { error?: string }).error ?? "Failed to save branding.");
     }
     const data = await res.json();
-    const b: Branding = { appName: data.app_name, divisionName: data.division_name, municipalityName: data.municipality_name ?? DEFAULTS.municipalityName };
+    const b: Branding = {
+      appName: data.app_name,
+      divisionName: data.division_name,
+      municipalityName: data.municipality_name ?? DEFAULTS.municipalityName,
+      regulatoryReference: data.regulatory_reference ?? DEFAULTS.regulatoryReference,
+    };
     setBranding(b);
     writeCache(b);
   }

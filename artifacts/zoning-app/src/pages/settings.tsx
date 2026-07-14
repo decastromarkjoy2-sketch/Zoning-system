@@ -32,23 +32,25 @@ interface BackupStatus {
 export default function Settings() {
   const { theme, setTheme } = useTheme();
   const { logoUrl, saveLogo, removeLogo } = useAppLogo();
-  const { appName, divisionName, municipalityName, saveBranding } = useAppBranding();
+  const { appName, divisionName, municipalityName, regulatoryReference, saveBranding } = useAppBranding();
   const { toast } = useToast();
   const { user } = useAuth();
   const [brandingName, setBrandingName] = useState(appName);
   const [brandingDivision, setBrandingDivision] = useState(divisionName);
   const [brandingMunicipality, setBrandingMunicipality] = useState(municipalityName);
+  const [brandingRegRef, setBrandingRegRef] = useState(regulatoryReference);
   const [brandingSaving, setBrandingSaving] = useState(false);
 
   useEffect(() => { setBrandingName(appName); }, [appName]);
   useEffect(() => { setBrandingDivision(divisionName); }, [divisionName]);
   useEffect(() => { setBrandingMunicipality(municipalityName); }, [municipalityName]);
+  useEffect(() => { setBrandingRegRef(regulatoryReference); }, [regulatoryReference]);
 
   async function handleSaveBranding() {
     setBrandingSaving(true);
     try {
-      await saveBranding(brandingName, brandingDivision, brandingMunicipality);
-      toast({ title: "Branding saved", description: "Application name, division, and municipality updated." });
+      await saveBranding(brandingName, brandingDivision, brandingMunicipality, brandingRegRef);
+      toast({ title: "Branding saved", description: "Application name, division, municipality, and regulatory reference updated." });
     } catch (err) {
       toast({ title: "Save failed", description: err instanceof Error ? err.message : "Unknown error.", variant: "destructive" });
     } finally {
@@ -307,6 +309,18 @@ export default function Settings() {
                 onChange={(e) => setBrandingMunicipality(e.target.value)}
                 placeholder="Municipality of Tago"
               />
+            </div>
+            <div className="space-y-1.5 sm:col-span-2">
+              <Label htmlFor="branding-reg-ref">Regulatory Reference (Form 1 Header)</Label>
+              <Input
+                id="branding-reg-ref"
+                value={brandingRegRef}
+                onChange={(e) => setBrandingRegRef(e.target.value)}
+                placeholder="Annex A HLURB Memo. Cr. No. 003 Series of 1985"
+              />
+              <p className="text-xs text-muted-foreground">
+                Appears at the top of every printed Form 1 document.
+              </p>
             </div>
           </div>
           <div className="flex justify-end">
