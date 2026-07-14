@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "wouter";
+import { ZONE_TYPES } from "@/constants/zones";
 import { useAuth } from "@/contexts/auth-context";
 import {
   Plus,
@@ -296,13 +297,9 @@ export default function ZoningRecords() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Zones</SelectItem>
-            <SelectItem value="residential">Residential</SelectItem>
-            <SelectItem value="commercial">Commercial</SelectItem>
-            <SelectItem value="industrial">Industrial</SelectItem>
-            <SelectItem value="agricultural">Agricultural</SelectItem>
-            <SelectItem value="institutional">Institutional</SelectItem>
-            <SelectItem value="protected_area">Protected Area</SelectItem>
-            <SelectItem value="mixed_use">Mixed Use</SelectItem>
+            {ZONE_TYPES.map(({ value, label }) => (
+              <SelectItem key={value} value={value}>{label}</SelectItem>
+            ))}
           </SelectContent>
         </Select>
 
@@ -437,16 +434,9 @@ export default function ZoningRecords() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="residential">RESIDENTIAL ZONE</SelectItem>
-                      <SelectItem value="commercial">COMMERCIAL ZONE</SelectItem>
-                      <SelectItem value="industrial">INDUSTRIAL ZONE</SelectItem>
-                      <SelectItem value="institutional">INSTITUTIONAL ZONE</SelectItem>
-                      <SelectItem value="forest">FOREST ZONE</SelectItem>
-                      <SelectItem value="parks_recreational">PARKS AND RECREATIONAL ZONE</SelectItem>
-                      <SelectItem value="open_space">OPEN SPACE ZONE (VACANT)</SelectItem>
-                      <SelectItem value="aquacultural">AQUACULTURAL ZONE</SelectItem>
-                      <SelectItem value="cemetery">CEMETERY ZONE</SelectItem>
-                      <SelectItem value="special_use">SPECIAL USE ZONE</SelectItem>
+                      {ZONE_TYPES.map(({ value, label }) => (
+                        <SelectItem key={value} value={value}>{label}</SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -761,16 +751,9 @@ export default function ZoningRecords() {
                   <Select value={editZoneType} onValueChange={setEditZoneType}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="residential">RESIDENTIAL ZONE</SelectItem>
-                      <SelectItem value="commercial">COMMERCIAL ZONE</SelectItem>
-                      <SelectItem value="industrial">INDUSTRIAL ZONE</SelectItem>
-                      <SelectItem value="institutional">INSTITUTIONAL ZONE</SelectItem>
-                      <SelectItem value="forest">FOREST ZONE</SelectItem>
-                      <SelectItem value="parks_recreational">PARKS AND RECREATIONAL ZONE</SelectItem>
-                      <SelectItem value="open_space">OPEN SPACE ZONE (VACANT)</SelectItem>
-                      <SelectItem value="aquacultural">AQUACULTURAL ZONE</SelectItem>
-                      <SelectItem value="cemetery">CEMETERY ZONE</SelectItem>
-                      <SelectItem value="special_use">SPECIAL USE ZONE</SelectItem>
+                      {ZONE_TYPES.map(({ value, label }) => (
+                        <SelectItem key={value} value={value}>{label}</SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>

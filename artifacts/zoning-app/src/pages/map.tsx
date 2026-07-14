@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Filter, Layers } from "lucide-react";
+import { ZONE_TYPES } from "@/constants/zones";
 import { useGetMapRecords, getGetMapRecordsQueryKey, useListZoningBoundaries } from "@workspace/api-client-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -172,13 +173,9 @@ export default function MapPage() {
           </SelectTrigger>
           <SelectContent className="z-[1100]">
             <SelectItem value="all">All Zones</SelectItem>
-            <SelectItem value="residential">Residential</SelectItem>
-            <SelectItem value="commercial">Commercial</SelectItem>
-            <SelectItem value="industrial">Industrial</SelectItem>
-            <SelectItem value="agricultural">Agricultural</SelectItem>
-            <SelectItem value="institutional">Institutional</SelectItem>
-            <SelectItem value="protected_area">Protected Area</SelectItem>
-            <SelectItem value="mixed_use">Mixed Use</SelectItem>
+            {ZONE_TYPES.map(({ value, label }) => (
+              <SelectItem key={value} value={value}>{label}</SelectItem>
+            ))}
           </SelectContent>
         </Select>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
