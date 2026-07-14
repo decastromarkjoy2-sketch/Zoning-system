@@ -54,26 +54,6 @@ function fmtNum(n?: number | null) {
   return Number(n).toLocaleString();
 }
 
-const SUSPICIOUS_WORDS = /\busa\b/i;
-
-function sanitizeField(value: string | null | undefined): {
-  text: string;
-  warning: string | null;
-} {
-  if (!value) return { text: "", warning: null };
-  const text = value.trim().replace(/\s+/g, " ");
-  if (text.length < 5) {
-    return { text, warning: "Value is suspiciously short — please verify." };
-  }
-  if (SUSPICIOUS_WORDS.test(text)) {
-    return {
-      text,
-      warning: "Address may contain invalid data (e.g. 'USA') — please verify.",
-    };
-  }
-  return { text, warning: null };
-}
-
 function Box({
   label,
   value,
@@ -327,25 +307,10 @@ export default function ZoningRecordFormView() {
                       3. Address &amp; Tel. No. of Applicant
                     </div>
                     <div className="border-b border-black min-h-[18px]">
-                      {(() => {
-                        const { text, warning } = sanitizeField(record.address);
-                        return (
-                          <>
-                            {text}
-                            {record.owner_contact
-                              ? ` / Tel: ${record.owner_contact.trim()}`
-                              : ""}
-                            {warning && (
-                              <span
-                                className="no-print ml-1 text-amber-500 font-bold cursor-help"
-                                title={warning}
-                              >
-                                ⚠
-                              </span>
-                            )}
-                          </>
-                        );
-                      })()}
+                      {record.address}
+                      {record.owner_contact
+                        ? ` / Tel: ${record.owner_contact}`
+                        : ""}
                     </div>
                   </div>
                   <div className="border border-black p-1">
@@ -397,26 +362,8 @@ export default function ZoningRecordFormView() {
                   <div className="border border-black p-1">
                     <div className="font-bold mb-0.5">9. Project Location</div>
                     <div className="border-b border-black min-h-[18px]">
-                      {(() => {
-                        const barangay = record.barangay?.trim().replace(/\s+/g, " ") ?? "";
-                        const { text: addr, warning: addrWarn } = sanitizeField(record.address);
-                        const { warning: brgyWarn } = sanitizeField(record.barangay);
-                        const combined = barangay + (addr ? `, ${addr}` : "");
-                        const warning = addrWarn ?? brgyWarn;
-                        return (
-                          <>
-                            {combined}
-                            {warning && (
-                              <span
-                                className="no-print ml-1 text-amber-500 font-bold cursor-help"
-                                title={warning}
-                              >
-                                ⚠
-                              </span>
-                            )}
-                          </>
-                        );
-                      })()}
+                      {record.barangay}
+                      {record.address ? `, ${record.address}` : ""}
                     </div>
                   </div>
                   <div className="border border-black p-1">
@@ -845,9 +792,9 @@ export default function ZoningRecordFormView() {
                   3. Address &amp; Tel. No. of Applicant
                 </div>
                 <div className="border-b border-black min-h-[18px]">
-                  {sanitizeField(record.address).text}
+                  {record.address}
                   {record.owner_contact
-                    ? ` / Tel: ${record.owner_contact.trim()}`
+                    ? ` / Tel: ${record.owner_contact}`
                     : ""}
                 </div>
               </div>
@@ -894,11 +841,8 @@ export default function ZoningRecordFormView() {
               <div className="border border-black p-1">
                 <div className="font-bold mb-0.5">9. Project Location</div>
                 <div className="border-b border-black min-h-[18px]">
-                  {(() => {
-                    const barangay = record.barangay?.trim().replace(/\s+/g, " ") ?? "";
-                    const addr = sanitizeField(record.address).text;
-                    return barangay + (addr ? `, ${addr}` : "");
-                  })()}
+                  {record.barangay}
+                  {record.address ? `, ${record.address}` : ""}
                 </div>
               </div>
               <div className="border border-black p-1">
