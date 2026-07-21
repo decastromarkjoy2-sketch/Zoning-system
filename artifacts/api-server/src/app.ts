@@ -1,39 +1,36 @@
-import express, { type Express } from "express";
+import express, {
+  type Express,
+  Request,
+  Response,
+  NextFunction,
+} from "express";
 import cors from "cors";
 import session from "express-session";
-import pinoHttpPkg from "pino-http";
 import router from "./routes";
 import { logger } from "./lib/logger";
 import "./session.d";
-
-// Handle default/namespace import compatibility for pino-http
-const pinoHttp =
-  (pinoHttpPkg as unknown as { default: typeof pinoHttpPkg }).default ||
-  pinoHttpPkg;
 
 const app: Express = express();
 
 app.set("trust proxy", 1);
 
-app.use(
-  pinoHttp({
-    logger,
-    serializers: {
-      req(req: any) {
-        return {
-          id: req.id,
-          method: req.method,
-          url: req.url?.split("?")[0],
-        };
+// Custom lightweight logging middleware instead of pino-http type collision issues
+app.use((req: Request, res: Response, next: NextFunction) => {
+  const start = Date.now();
+  res.on("finish", () => {
+    const duration = Date.now() - start;
+    logger.info(
+      {
+        method: req.method,
+        url: req.url?.split("?")[0],
+        statusCode: res.statusCode,
+        durationMs: duration,
       },
-      res(res: any) {
-        return {
-          statusCode: res.statusCode,
-        };
-      },
-    },
-  }),
-);
+      "HTTP request completed",
+    );
+  });
+  next();
+});
 
 app.use(
   session({
