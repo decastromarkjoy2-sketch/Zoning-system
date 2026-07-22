@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router, Request, Response } from "express";
 import { db } from "@workspace/db";
 import { usersTable } from "@workspace/db/schema";
 import { eq } from "drizzle-orm";
@@ -6,7 +6,7 @@ import { verifyPassword, hashPassword, isBcryptHash } from "../lib/password";
 
 const router = Router();
 
-router.post("/auth/login", async (req, res) => {
+router.post("/auth/login", async (req: Request, res: Response) => {
   const { email, password } = req.body as { email?: string; password?: string };
 
   if (!email || !password) {
@@ -35,7 +35,10 @@ router.post("/auth/login", async (req, res) => {
   // Transparently upgrade legacy plaintext passwords to bcrypt hashes on successful login.
   if (!isBcryptHash(user.password)) {
     const upgraded = await hashPassword(password);
-    await db.update(usersTable).set({ password: upgraded }).where(eq(usersTable.id, user.id));
+    await db
+      .update(usersTable)
+      .set({ password: upgraded })
+      .where(eq(usersTable.id, user.id));
   }
 
   req.session.userId = user.id;
@@ -50,7 +53,7 @@ router.post("/auth/login", async (req, res) => {
   });
 });
 
-router.get("/auth/me", async (req, res) => {
+router.get("/auth/me", async (req: Request, res: Response) => {
   const userId = req.session.userId;
 
   if (!userId) {
@@ -79,7 +82,7 @@ router.get("/auth/me", async (req, res) => {
   });
 });
 
-router.post("/auth/logout", (req, res) => {
+router.post("/auth/logout", (req: Request, res: Response) => {
   req.session.destroy(() => {
     res.clearCookie("zoning.sid");
     res.json({ ok: true });
