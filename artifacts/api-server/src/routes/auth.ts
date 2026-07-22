@@ -41,8 +41,9 @@ router.post("/auth/login", async (req: Request, res: Response) => {
       .where(eq(usersTable.id, user.id));
   }
 
-  req.session.userId = user.id;
-  req.session.userRole = user.role;
+  const session = req.session as { userId?: number; userRole?: string };
+  session.userId = user.id;
+  session.userRole = user.role;
 
   res.json({
     id: user.id,
@@ -54,7 +55,8 @@ router.post("/auth/login", async (req: Request, res: Response) => {
 });
 
 router.get("/auth/me", async (req: Request, res: Response) => {
-  const userId = req.session.userId;
+  const session = req.session as { userId?: number; userRole?: string };
+  const userId = session.userId;
 
   if (!userId) {
     res.status(401).json({ error: "Not authenticated." });
